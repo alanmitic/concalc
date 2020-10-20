@@ -7,7 +7,8 @@
     "start:dev": "nodemon",
     "start": "npm run build && node build/index.js",
     "build": "rimraf ./build && tsc --project tsconfig.prod.json",
-    "test": "mocha  ./build/*.test.js"
+    "build:dev": "rimraf ./build && tsc",
+    "test": "npm run build:dev && mocha ./build/*.test.js"
   },
   "keywords": [],
   "author": "",
