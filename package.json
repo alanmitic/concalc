@@ -6,14 +6,18 @@
   "scripts": {
     "start:dev": "nodemon",
     "start": "npm run build && node build/index.js",
-    "build": "rimraf ./build && tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rimraf ./build && tsc --project tsconfig.prod.json",
+    "test": "mocha  ./build/*.test.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.0.3",
     "@types/node": "^14.11.10",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.0",
     "nodemon": "^2.0.5",
     "rimraf": "^3.0.2",
     "ts-node": "^9.0.0",
