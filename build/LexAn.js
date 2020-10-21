@@ -108,8 +108,14 @@ var LexAn = /** @class */ (function () {
                 nextToken = [TokenType.OP_DIVIDE, null];
                 break;
             case "<":
-                // Need to check for extra "<"
-                nextToken = [TokenType.OP_LEFT_SHIFT, null];
+                // Check for "<<"
+                if (this.peekNextChar() === "<") {
+                    this.inputIndex++;
+                    nextToken = [TokenType.OP_LEFT_SHIFT, null];
+                }
+                else {
+                    throw new LexAnException();
+                }
                 break;
             case "-":
                 nextToken = [TokenType.OP_MINUS, null];
@@ -128,8 +134,19 @@ var LexAn = /** @class */ (function () {
                 break;
             case ">":
                 // Need to check for ">>" or ">>>"
-                nextToken = [TokenType.OP_RIGHT_SHIFT, null];
-                //nextToken = [TokenType.OP_UNSIGNED_RIGHT_SHIFT, null];
+                if (this.peekNextChar() === ">") {
+                    this.inputIndex++;
+                    if (this.peekNextChar() === ">") {
+                        this.inputIndex++;
+                        nextToken = [TokenType.OP_UNSIGNED_RIGHT_SHIFT, null];
+                    }
+                    else {
+                        nextToken = [TokenType.OP_RIGHT_SHIFT, null];
+                    }
+                }
+                else {
+                    throw new LexAnException();
+                }
                 break;
             case "0":
             case "1":
@@ -156,6 +173,13 @@ var LexAn = /** @class */ (function () {
                 }
         }
         return nextToken;
+    };
+    /**
+     * Peek at the next character without incrementing current position.
+     */
+    LexAn.prototype.peekNextChar = function () {
+        var ch = this.inputText.charAt(this.inputIndex + 1);
+        return ch;
     };
     /**
      * Skips the leading spaces from the input text starting at the current

@@ -77,6 +77,78 @@ describe('Lexical Analayser API', function() {
     expect(token[0]).equal(TokenType.NUMBER)
     expect(token[1]).equal(1234)
   })
+
+  it('should extract operators from an expression', function() {
+    let lexAn
+    let token: [TokenType, string | number | null]
+
+    lexAn = new LexAn("   \t = & ~ | ' / << - % * + ^ >> >>>    (  )  \t  ")
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_ASSIGN)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_BITWISE_AND)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_BITWISE_NOT)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_BITWISE_OR)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_BITWISE_XOR)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_DIVIDE)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_LEFT_SHIFT)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_MINUS)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_MOD)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_MULTIPLY)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_PLUS)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_POWER)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_RIGHT_SHIFT)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_UNSIGNED_RIGHT_SHIFT)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.LP)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.RP)
+    expect(token[1]).equal(null)
+  })
+
 })
 
 describe('Lexical Analayser helper methods', function() {

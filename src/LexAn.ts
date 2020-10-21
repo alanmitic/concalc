@@ -122,8 +122,13 @@ export class LexAn {
                 break
 
             case "<":
-                // Need to check for extra "<"
-                nextToken = [TokenType.OP_LEFT_SHIFT, null];
+                // Check for "<<"
+                if (this.peekNextChar() === "<") {
+                    this.inputIndex++;
+                    nextToken = [TokenType.OP_LEFT_SHIFT, null];
+                } else {
+                    throw new LexAnException();
+                }
                 break
 
             case "-":
@@ -148,8 +153,17 @@ export class LexAn {
 
             case ">":
                 // Need to check for ">>" or ">>>"
-                nextToken = [TokenType.OP_RIGHT_SHIFT, null];
-                //nextToken = [TokenType.OP_UNSIGNED_RIGHT_SHIFT, null];
+                if (this.peekNextChar() === ">") {
+                    this.inputIndex++;
+                    if (this.peekNextChar() === ">") {
+                        this.inputIndex++;
+                        nextToken = [TokenType.OP_UNSIGNED_RIGHT_SHIFT, null];
+                    } else {
+                        nextToken = [TokenType.OP_RIGHT_SHIFT, null];
+                    }
+                } else {
+                    throw new LexAnException();
+                }
                 break
 
             case "0":
@@ -179,6 +193,14 @@ export class LexAn {
         }
 
         return nextToken
+    }
+
+    /**
+     * Peek at the next character without incrementing current position.
+     */
+    private peekNextChar(): string {
+        let ch: string = this.inputText.charAt(this.inputIndex+1)
+        return ch
     }
 
     /**
