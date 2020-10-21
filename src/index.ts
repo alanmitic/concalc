@@ -1,6 +1,9 @@
-import * as readline from "readline";
+import {LexAn} from  './LexAn'
+
+/*import * as readline from "readline";
 
 console.log("Console Calculator");
+
 
 let rl = readline.createInterface({
     input: process.stdin,
@@ -17,7 +20,7 @@ const start = async () => {
 
 start()
 rl.close();
-
+*/
 /*//while(!isExitCommand) {
     rl.question("concalc >> ", (answer) => {
         switch(answer.toLowerCase()) {
@@ -33,3 +36,8 @@ rl.close();
     });
 //}*/
 
+console.log("Console Calculator");
+
+let lexAn = new LexAn("   abcd");
+let token = lexAn.getNextToken();
+console.log(token);
