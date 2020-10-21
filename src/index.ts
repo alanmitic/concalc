@@ -1,4 +1,4 @@
-import {LexAn} from  './LexAn'
+import { LexAn } from "./LexAn"
 
 /*import * as readline from "readline";
 

@@ -1,9 +1,9 @@
-import { expect } from 'chai'
-import {TokenType} from './LexAn'
-import {LexAn} from  './LexAn'
+import { expect } from "chai"
+import { TokenType } from "./LexAn"
+import { LexAn } from "./LexAn"
 
-describe('Lexical Analayser API', function() {
-  it('should return END on an empty expression', function() {
+describe("Lexical Analayser API", function () {
+  it("should return END on an empty expression", function () {
     let lexAn
     let token: [TokenType, string | number | null]
 
@@ -23,7 +23,7 @@ describe('Lexical Analayser API', function() {
     expect(token[1]).equal(null)
   })
 
-  it('should extract indentifiers from an expression', function() {
+  it("should extract indentifiers from an expression", function () {
     let lexAn
     let token: [TokenType, string | number | null]
 
@@ -53,7 +53,7 @@ describe('Lexical Analayser API', function() {
     expect(token[1]).equal("aBc")
   })
 
-  it('should extract numbers from an expression', function() {
+  it("should extract numbers from an expression", function () {
     let lexAn
     let token: [TokenType, string | number | null]
 
@@ -78,7 +78,7 @@ describe('Lexical Analayser API', function() {
     expect(token[1]).equal(1234)
   })
 
-  it('should extract operators from an expression', function() {
+  it("should extract operators from an expression", function () {
     let lexAn
     let token: [TokenType, string | number | null]
 
@@ -151,15 +151,15 @@ describe('Lexical Analayser API', function() {
 
 })
 
-describe('Lexical Analayser helper methods', function() {
-  it('should detect whitespaces characters correctly', function() {
+describe("Lexical Analayser helper methods", function () {
+  it("should detect whitespaces characters correctly", function () {
     expect(LexAn.isWhitespace(" ")).equal(true);
     expect(LexAn.isWhitespace("\t")).equal(true);
     expect(LexAn.isWhitespace("a")).equal(false);
     expect(LexAn.isWhitespace("")).equal(false);
   })
 
-  it('should detect alpha characters correctly', function() {
+  it("should detect alpha characters correctly", function () {
     expect(LexAn.isAlpha(" ")).equal(false);
     expect(LexAn.isAlpha("\t")).equal(false);
     expect(LexAn.isAlpha("")).equal(false);
@@ -169,7 +169,7 @@ describe('Lexical Analayser helper methods', function() {
     expect(LexAn.isAlpha("Z")).equal(true);
   })
 
-  it('should detect numbers characters correctly', function() {
+  it("should detect numbers characters correctly", function () {
     expect(LexAn.isNumber(" ")).equal(false);
     expect(LexAn.isNumber("\t")).equal(false);
     expect(LexAn.isNumber("")).equal(false);

@@ -199,7 +199,7 @@ export class LexAn {
      * Peek at the next character without incrementing current position.
      */
     private peekNextChar(): string {
-        let ch: string = this.inputText.charAt(this.inputIndex+1)
+        let ch: string = this.inputText.charAt(this.inputIndex + 1)
         return ch
     }
 
@@ -222,7 +222,7 @@ export class LexAn {
     public extractNumber(): number {
         let extractedNumber: number = 0;
         let extractedNumberString: string = ""
-        for(; ;) {
+        for (; ;) {
             let ch: string = this.inputText.charAt(this.inputIndex++)
             // Note: an empty string is returned in ch if the index goes out of bounds.
 

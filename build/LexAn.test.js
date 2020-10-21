@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var chai_1 = require("chai");
 var LexAn_1 = require("./LexAn");
 var LexAn_2 = require("./LexAn");
-describe('Lexical Analayser API', function () {
-    it('should return END on an empty expression', function () {
+describe("Lexical Analayser API", function () {
+    it("should return END on an empty expression", function () {
         var lexAn;
         var token;
         lexAn = new LexAn_2.LexAn("");
@@ -20,7 +20,7 @@ describe('Lexical Analayser API', function () {
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.END);
         chai_1.expect(token[1]).equal(null);
     });
-    it('should extract indentifiers from an expression', function () {
+    it("should extract indentifiers from an expression", function () {
         var lexAn;
         var token;
         lexAn = new LexAn_2.LexAn("   \tabc   \t  ");
@@ -44,7 +44,7 @@ describe('Lexical Analayser API', function () {
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.IDENTIFIER);
         chai_1.expect(token[1]).equal("aBc");
     });
-    it('should extract numbers from an expression', function () {
+    it("should extract numbers from an expression", function () {
         var lexAn;
         var token;
         lexAn = new LexAn_2.LexAn("   \t1234   \t  ");
@@ -64,7 +64,7 @@ describe('Lexical Analayser API', function () {
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.NUMBER);
         chai_1.expect(token[1]).equal(1234);
     });
-    it('should extract operators from an expression', function () {
+    it("should extract operators from an expression", function () {
         var lexAn;
         var token;
         lexAn = new LexAn_2.LexAn("   \t = & ~ | ' / << - % * + ^ >> >>>    (  )  \t  ");
@@ -118,14 +118,14 @@ describe('Lexical Analayser API', function () {
         chai_1.expect(token[1]).equal(null);
     });
 });
-describe('Lexical Analayser helper methods', function () {
-    it('should detect whitespaces characters correctly', function () {
+describe("Lexical Analayser helper methods", function () {
+    it("should detect whitespaces characters correctly", function () {
         chai_1.expect(LexAn_2.LexAn.isWhitespace(" ")).equal(true);
         chai_1.expect(LexAn_2.LexAn.isWhitespace("\t")).equal(true);
         chai_1.expect(LexAn_2.LexAn.isWhitespace("a")).equal(false);
         chai_1.expect(LexAn_2.LexAn.isWhitespace("")).equal(false);
     });
-    it('should detect alpha characters correctly', function () {
+    it("should detect alpha characters correctly", function () {
         chai_1.expect(LexAn_2.LexAn.isAlpha(" ")).equal(false);
         chai_1.expect(LexAn_2.LexAn.isAlpha("\t")).equal(false);
         chai_1.expect(LexAn_2.LexAn.isAlpha("")).equal(false);
@@ -134,7 +134,7 @@ describe('Lexical Analayser helper methods', function () {
         chai_1.expect(LexAn_2.LexAn.isAlpha("A")).equal(true);
         chai_1.expect(LexAn_2.LexAn.isAlpha("Z")).equal(true);
     });
-    it('should detect numbers characters correctly', function () {
+    it("should detect numbers characters correctly", function () {
         chai_1.expect(LexAn_2.LexAn.isNumber(" ")).equal(false);
         chai_1.expect(LexAn_2.LexAn.isNumber("\t")).equal(false);
         chai_1.expect(LexAn_2.LexAn.isNumber("")).equal(false);
