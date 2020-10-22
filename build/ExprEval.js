@@ -132,7 +132,7 @@ var ExprEval = /** @class */ (function () {
                 return this.getTermPrecedence8(lexAn);
             case LexAn_1.TokenType.OP_BITWISE_NOT:
                 return ~this.getTermPrecedence8(lexAn);
-            case LexAn_1.TokenType.LP:
+            case LexAn_1.TokenType.LP: {
                 // Treat the expression after the parentheses as a new expression and evaluate.
                 var term = this.getTermPrecedence0(lexAn);
                 // Check expression should have ended on a right parentheses.
@@ -140,17 +140,23 @@ var ExprEval = /** @class */ (function () {
                     throw new ExprException(") expected");
                 }
                 return term;
-            // case TokenType.VARIABLE:
-            //     // Extract symbol value from global symbol table.
-            //     double &v = (*m_pGlobalSymTab)[m_pLex->m_StringValue];
-            //     // Get the next token, so that the token type of the next token
-            //     // is available to the caller of this function. If we have an
-            //     // assign "=" then process the terms after the assign to
-            //     // determine the value of the symbol.
-            //     if(m_pLex->GetToken() == CLex::OP_ASSIGN)
-            //         v = GetTerm();
-            //     // Return the value of the symbol.
-            //     return v;
+            }
+            case LexAn_1.TokenType.VARIABLE: {
+                var variableName = token[1];
+                var variableValue = this.variableStore.get(variableName);
+                if (variableValue === undefined) {
+                    // Variable does not exist, create it.
+                    variableValue = 0;
+                    this.variableStore.set(variableName, variableValue);
+                }
+                //     // Get the next token, so that the token type of the next token
+                //     // is available to the caller of this function. If we have an
+                //     // assign "=" then process the terms after the assign to
+                //     // determine the value of the symbol.
+                //     if(m_pLex->GetToken() == CLex::OP_ASSIGN)
+                //         v = GetTerm();
+                return variableValue;
+            }
             default:
                 throw new ExprException("primary expected");
         }

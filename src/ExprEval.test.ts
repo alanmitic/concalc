@@ -45,5 +45,11 @@ describe("Expression Evaluator API", function () {
         expect(ee.evaluate("((1234))")).equal(1234)
     })
 
+    it("should evaluate expressions with the variables", function () {
+        let vs: VariableStore = new Map();
+        let ee = new ExprEval(vs);
+
+        expect(ee.evaluate("$myVar")).equal(0)
+    })
 
 })
