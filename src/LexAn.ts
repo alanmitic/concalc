@@ -55,7 +55,7 @@ export class LexAnException {
 /**
  * Token is a tuple that consists of a token type and value associated with that type.
  */
-type Token = [TokenType, number | string | null]
+export type Token = [TokenType, number | string | null]
 
 /**
  * Lexical Analyser
@@ -65,6 +65,8 @@ export class LexAn {
     inputText: string
     /** Current index into the input text. */
     inputIndex: number
+    /** Current token or null if there is not token. */
+    currentToken: Token | null
 
     /**
      * Constructor.
@@ -72,7 +74,15 @@ export class LexAn {
      */
     constructor(inputText: string) {
         this.inputText = inputText
-        this.inputIndex = -1
+        this.inputIndex = 0
+        this.currentToken = null
+    }
+
+    /**
+     * Gets the curent token or null if there is no current token defined.
+     */
+    getCurrentToken(): Token | null {
+        return this.currentToken
     }
 
     /**
@@ -81,8 +91,7 @@ export class LexAn {
     getNextToken(): Token {
         this.skipSpaces()
 
-        // Go to the next position in the input text and check if we have reached the end of the input.
-        if (++this.inputIndex > this.inputText.length - 1) {
+        if (this.inputIndex > this.inputText.length - 1) {
             return [TokenType.END, null]
         }
 
@@ -96,34 +105,42 @@ export class LexAn {
 
             case "(":
                 nextToken = [TokenType.LP, null];
+                this.inputIndex++;
                 break;
 
             case ")":
                 nextToken = [TokenType.RP, null];
+                this.inputIndex++;
                 break;
 
             case "=":
                 nextToken = [TokenType.OP_ASSIGN, null];
+                this.inputIndex++;
                 break
 
             case "&":
                 nextToken = [TokenType.OP_BITWISE_AND, null];
+                this.inputIndex++;
                 break
 
             case "~":
                 nextToken = [TokenType.OP_BITWISE_NOT, null];
+                this.inputIndex++;
                 break
 
             case "|":
                 nextToken = [TokenType.OP_BITWISE_OR, null];
+                this.inputIndex++;
                 break
 
             case "'":
                 nextToken = [TokenType.OP_BITWISE_XOR, null];
+                this.inputIndex++;
                 break
 
             case "/":
                 nextToken = [TokenType.OP_DIVIDE, null];
+                this.inputIndex++;
                 break
 
             case "<":
@@ -134,26 +151,32 @@ export class LexAn {
                 } else {
                     throw new LexAnException();
                 }
+                this.inputIndex++;
                 break
 
             case "-":
                 nextToken = [TokenType.OP_MINUS, null];
+                this.inputIndex++;
                 break
 
             case "%":
                 nextToken = [TokenType.OP_MOD, null];
+                this.inputIndex++;
                 break
 
             case "*":
                 nextToken = [TokenType.OP_MULTIPLY, null];
+                this.inputIndex++;
                 break
 
             case "+":
                 nextToken = [TokenType.OP_PLUS, null];
+                this.inputIndex++;
                 break
 
             case "^":
                 nextToken = [TokenType.OP_POWER, null];
+                this.inputIndex++;
                 break
 
             case ">":
@@ -169,6 +192,7 @@ export class LexAn {
                 } else {
                     throw new LexAnException();
                 }
+                this.inputIndex++;
                 break
 
             case "0":
@@ -181,11 +205,12 @@ export class LexAn {
             case "7":
             case "8":
             case "9":
-                nextToken = [TokenType.NUMBER, this.extractNumber()];
+                nextToken = [TokenType.NUMBER, this.extractNumber()]
                 break
 
             case "$":
-                nextToken = [TokenType.VARIABLE, "myvar"];
+                this.inputIndex++
+                nextToken = [TokenType.VARIABLE, "$" + this.extractIdentifier()]
                 break
 
             default:
@@ -197,6 +222,7 @@ export class LexAn {
                 }
         }
 
+        this.currentToken = nextToken
         return nextToken
     }
 
@@ -213,12 +239,9 @@ export class LexAn {
      * processing position.
      */
     private skipSpaces() {
-        do {
+        while(LexAn.isWhitespace(this.inputText.charAt(this.inputIndex))) {
             this.inputIndex++
-        } while (this.inputIndex <= this.inputText.length &&
-            LexAn.isWhitespace(this.inputText.charAt(this.inputIndex)))
-
-        this.inputIndex--;
+        }
     }
 
     /**
@@ -228,13 +251,13 @@ export class LexAn {
         let extractedNumber: number = 0;
         let extractedNumberString: string = ""
         for (; ;) {
-            let ch: string = this.inputText.charAt(this.inputIndex++)
+            let ch: string = this.inputText.charAt(this.inputIndex)
             // Note: an empty string is returned in ch if the index goes out of bounds.
 
             if (LexAn.isNumber(ch)) {
                 extractedNumberString = extractedNumberString + ch
+                this.inputIndex++
             } else {
-                this.inputIndex--
                 break;
             }
         }
@@ -256,7 +279,6 @@ export class LexAn {
             if (LexAn.isAlpha(ch)) {
                 extractedIdentifier = extractedIdentifier + ch
             } else {
-                this.inputIndex--
                 break;
             }
         }

@@ -66,15 +66,21 @@ var LexAn = /** @class */ (function () {
      */
     function LexAn(inputText) {
         this.inputText = inputText;
-        this.inputIndex = -1;
+        this.inputIndex = 0;
+        this.currentToken = null;
     }
+    /**
+     * Gets the curent token or null if there is no current token defined.
+     */
+    LexAn.prototype.getCurrentToken = function () {
+        return this.currentToken;
+    };
     /**
      * Gets the next token from the input text.
      */
     LexAn.prototype.getNextToken = function () {
         this.skipSpaces();
-        // Go to the next position in the input text and check if we have reached the end of the input.
-        if (++this.inputIndex > this.inputText.length - 1) {
+        if (this.inputIndex > this.inputText.length - 1) {
             return [TokenType.END, null];
         }
         var nextToken;
@@ -85,27 +91,35 @@ var LexAn = /** @class */ (function () {
                 break;
             case "(":
                 nextToken = [TokenType.LP, null];
+                this.inputIndex++;
                 break;
             case ")":
                 nextToken = [TokenType.RP, null];
+                this.inputIndex++;
                 break;
             case "=":
                 nextToken = [TokenType.OP_ASSIGN, null];
+                this.inputIndex++;
                 break;
             case "&":
                 nextToken = [TokenType.OP_BITWISE_AND, null];
+                this.inputIndex++;
                 break;
             case "~":
                 nextToken = [TokenType.OP_BITWISE_NOT, null];
+                this.inputIndex++;
                 break;
             case "|":
                 nextToken = [TokenType.OP_BITWISE_OR, null];
+                this.inputIndex++;
                 break;
             case "'":
                 nextToken = [TokenType.OP_BITWISE_XOR, null];
+                this.inputIndex++;
                 break;
             case "/":
                 nextToken = [TokenType.OP_DIVIDE, null];
+                this.inputIndex++;
                 break;
             case "<":
                 // Check for "<<"
@@ -116,21 +130,27 @@ var LexAn = /** @class */ (function () {
                 else {
                     throw new LexAnException();
                 }
+                this.inputIndex++;
                 break;
             case "-":
                 nextToken = [TokenType.OP_MINUS, null];
+                this.inputIndex++;
                 break;
             case "%":
                 nextToken = [TokenType.OP_MOD, null];
+                this.inputIndex++;
                 break;
             case "*":
                 nextToken = [TokenType.OP_MULTIPLY, null];
+                this.inputIndex++;
                 break;
             case "+":
                 nextToken = [TokenType.OP_PLUS, null];
+                this.inputIndex++;
                 break;
             case "^":
                 nextToken = [TokenType.OP_POWER, null];
+                this.inputIndex++;
                 break;
             case ">":
                 // Need to check for ">>" or ">>>"
@@ -147,6 +167,7 @@ var LexAn = /** @class */ (function () {
                 else {
                     throw new LexAnException();
                 }
+                this.inputIndex++;
                 break;
             case "0":
             case "1":
@@ -161,7 +182,8 @@ var LexAn = /** @class */ (function () {
                 nextToken = [TokenType.NUMBER, this.extractNumber()];
                 break;
             case "$":
-                nextToken = [TokenType.VARIABLE, "myvar"];
+                this.inputIndex++;
+                nextToken = [TokenType.VARIABLE, "$" + this.extractIdentifier()];
                 break;
             default:
                 // Error
@@ -172,6 +194,7 @@ var LexAn = /** @class */ (function () {
                     throw new LexAnException();
                 }
         }
+        this.currentToken = nextToken;
         return nextToken;
     };
     /**
@@ -186,11 +209,9 @@ var LexAn = /** @class */ (function () {
      * processing position.
      */
     LexAn.prototype.skipSpaces = function () {
-        do {
+        while (LexAn.isWhitespace(this.inputText.charAt(this.inputIndex))) {
             this.inputIndex++;
-        } while (this.inputIndex <= this.inputText.length &&
-            LexAn.isWhitespace(this.inputText.charAt(this.inputIndex)));
-        this.inputIndex--;
+        }
     };
     /**
      * Extracts the number from the current pocessing position in the input text.
@@ -199,13 +220,13 @@ var LexAn = /** @class */ (function () {
         var extractedNumber = 0;
         var extractedNumberString = "";
         for (;;) {
-            var ch = this.inputText.charAt(this.inputIndex++);
+            var ch = this.inputText.charAt(this.inputIndex);
             // Note: an empty string is returned in ch if the index goes out of bounds.
             if (LexAn.isNumber(ch)) {
                 extractedNumberString = extractedNumberString + ch;
+                this.inputIndex++;
             }
             else {
-                this.inputIndex--;
                 break;
             }
         }
@@ -223,7 +244,6 @@ var LexAn = /** @class */ (function () {
                 extractedIdentifier = extractedIdentifier + ch;
             }
             else {
-                this.inputIndex--;
                 break;
             }
         }

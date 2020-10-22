@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var LexAn_1 = require("./LexAn");
+var ExprEval_1 = require("./ExprEval");
 /*import * as readline from "readline";
 
 console.log("Console Calculator");
@@ -37,7 +37,7 @@ rl.close();
     });
 //}*/
 console.log("Console Calculator");
-var lexAn = new LexAn_1.LexAn("   abcd");
-var token = lexAn.getNextToken();
-console.log(token);
+var vs = new Map();
+var ee = new ExprEval_1.ExprEval(vs);
+console.log(ee.evaluate("2^16"));
 //# sourceMappingURL=index.js.map

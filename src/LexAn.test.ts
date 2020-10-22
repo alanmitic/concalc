@@ -1,11 +1,10 @@
 import { expect } from "chai"
-import { TokenType } from "./LexAn"
-import { LexAn } from "./LexAn"
+import { TokenType, Token, LexAn } from "./LexAn"
 
 describe("Lexical Analayser API", function () {
   it("should return END on an empty expression", function () {
     let lexAn
-    let token: [TokenType, string | number | null]
+    let token: Token
 
     lexAn = new LexAn("")
     token = lexAn.getNextToken()
@@ -25,7 +24,7 @@ describe("Lexical Analayser API", function () {
 
   it("should extract indentifiers from an expression", function () {
     let lexAn
-    let token: [TokenType, string | number | null]
+    let token: Token
 
     lexAn = new LexAn("   \tabc   \t  ")
     token = lexAn.getNextToken()
@@ -55,7 +54,7 @@ describe("Lexical Analayser API", function () {
 
   it("should extract numbers from an expression", function () {
     let lexAn
-    let token: [TokenType, string | number | null]
+    let token: Token
 
     lexAn = new LexAn("   \t1234   \t  ")
     token = lexAn.getNextToken()
@@ -80,7 +79,7 @@ describe("Lexical Analayser API", function () {
 
   it("should extract operators from an expression", function () {
     let lexAn
-    let token: [TokenType, string | number | null]
+    let token: Token
 
     lexAn = new LexAn("   \t = & ~ | ' / << - % * + ^ >> >>>    (  )  \t  # A comment")
 
@@ -153,34 +152,63 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal(null)
   })
 
+  it("should handle expressions where there are no spaces inbetween tokens", function () {
+    let lexAn
+    let token: Token
+
+    lexAn = new LexAn("1234^5678")
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.NUMBER)
+    expect(token[1]).equal(1234)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.OP_POWER)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.NUMBER)
+    expect(token[1]).equal(5678)
+  })
+
+  it("should extract variable names from an expression", function () {
+    let lexAn
+    let token: Token
+
+    lexAn = new LexAn("   \t$myVar   \t  ")
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.VARIABLE)
+    expect(token[1]).equal("$myVar")
+  })
+
+
 })
 
 describe("Lexical Analayser helper methods", function () {
   it("should detect whitespaces characters correctly", function () {
-    expect(LexAn.isWhitespace(" ")).equal(true);
-    expect(LexAn.isWhitespace("\t")).equal(true);
-    expect(LexAn.isWhitespace("a")).equal(false);
-    expect(LexAn.isWhitespace("")).equal(false);
+    expect(LexAn.isWhitespace(" ")).equal(true)
+    expect(LexAn.isWhitespace("\t")).equal(true)
+    expect(LexAn.isWhitespace("a")).equal(false)
+    expect(LexAn.isWhitespace("")).equal(false)
   })
 
   it("should detect alpha characters correctly", function () {
-    expect(LexAn.isAlpha(" ")).equal(false);
-    expect(LexAn.isAlpha("\t")).equal(false);
-    expect(LexAn.isAlpha("")).equal(false);
-    expect(LexAn.isAlpha("a")).equal(true);
-    expect(LexAn.isAlpha("z")).equal(true);
-    expect(LexAn.isAlpha("A")).equal(true);
-    expect(LexAn.isAlpha("Z")).equal(true);
+    expect(LexAn.isAlpha(" ")).equal(false)
+    expect(LexAn.isAlpha("\t")).equal(false)
+    expect(LexAn.isAlpha("")).equal(false)
+    expect(LexAn.isAlpha("a")).equal(true)
+    expect(LexAn.isAlpha("z")).equal(true)
+    expect(LexAn.isAlpha("A")).equal(true)
+    expect(LexAn.isAlpha("Z")).equal(true)
   })
 
   it("should detect numbers characters correctly", function () {
-    expect(LexAn.isNumber(" ")).equal(false);
-    expect(LexAn.isNumber("\t")).equal(false);
-    expect(LexAn.isNumber("")).equal(false);
-    expect(LexAn.isNumber("a")).equal(false);
-    expect(LexAn.isNumber("z")).equal(false);
-    expect(LexAn.isNumber("0")).equal(true);
-    expect(LexAn.isNumber("9")).equal(true);
+    expect(LexAn.isNumber(" ")).equal(false)
+    expect(LexAn.isNumber("\t")).equal(false)
+    expect(LexAn.isNumber("")).equal(false)
+    expect(LexAn.isNumber("a")).equal(false)
+    expect(LexAn.isNumber("z")).equal(false)
+    expect(LexAn.isNumber("0")).equal(true)
+    expect(LexAn.isNumber("9")).equal(true)
   })
 
 })

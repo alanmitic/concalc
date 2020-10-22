@@ -1,4 +1,4 @@
-import { LexAn } from "./LexAn"
+import { ExprEval, VariableStore } from "./ExprEval"
 
 /*import * as readline from "readline";
 
@@ -38,6 +38,6 @@ rl.close();
 
 console.log("Console Calculator");
 
-let lexAn = new LexAn("   abcd");
-let token = lexAn.getNextToken();
-console.log(token);
+let vs: VariableStore = new Map();
+let ee = new ExprEval(vs);
+console.log(ee.evaluate("2^16"))
