@@ -67,7 +67,7 @@ describe("Lexical Analayser API", function () {
     it("should extract operators from an expression", function () {
         var lexAn;
         var token;
-        lexAn = new LexAn_2.LexAn("   \t = & ~ | ' / << - % * + ^ >> >>>    (  )  \t  ");
+        lexAn = new LexAn_2.LexAn("   \t = & ~ | ' / << - % * + ^ >> >>>    (  )  \t  # A comment");
         token = lexAn.getNextToken();
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.OP_ASSIGN);
         chai_1.expect(token[1]).equal(null);
@@ -115,6 +115,9 @@ describe("Lexical Analayser API", function () {
         chai_1.expect(token[1]).equal(null);
         token = lexAn.getNextToken();
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.RP);
+        chai_1.expect(token[1]).equal(null);
+        token = lexAn.getNextToken();
+        chai_1.expect(token[0]).equal(LexAn_1.TokenType.END);
         chai_1.expect(token[1]).equal(null);
     });
 });

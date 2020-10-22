@@ -1,9 +1,10 @@
 import { expect } from "chai"
-import { ExprEval } from "./ExprEval"
+import { ExprEval, VariableStore } from "./ExprEval"
 
 describe("Expression Evaluator API", function () {
     it("should xxxxx", function () {
-        let ee = new ExprEval();
+        let vs: VariableStore = new Map();
+        let ee = new ExprEval(vs);
         expect(null).equal(null)
     })
 })

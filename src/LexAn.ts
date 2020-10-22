@@ -53,6 +53,11 @@ export class LexAnException {
 }
 
 /**
+ * Token is a tuple that consists of a token type and value associated with that type.
+ */
+type Token = [TokenType, number | string | null]
+
+/**
  * Lexical Analyser
  */
 export class LexAn {
@@ -73,7 +78,7 @@ export class LexAn {
     /**
      * Gets the next token from the input text.
      */
-    getNextToken(): [TokenType, number | string | null] {
+    getNextToken(): Token {
         this.skipSpaces()
 
         // Go to the next position in the input text and check if we have reached the end of the input.
@@ -81,7 +86,7 @@ export class LexAn {
             return [TokenType.END, null]
         }
 
-        let nextToken: [TokenType, number | string | null]
+        let nextToken: Token
 
         let ch: string = this.inputText.charAt(this.inputIndex)
         switch (ch) {

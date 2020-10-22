@@ -82,7 +82,7 @@ describe("Lexical Analayser API", function () {
     let lexAn
     let token: [TokenType, string | number | null]
 
-    lexAn = new LexAn("   \t = & ~ | ' / << - % * + ^ >> >>>    (  )  \t  ")
+    lexAn = new LexAn("   \t = & ~ | ' / << - % * + ^ >> >>>    (  )  \t  # A comment")
 
     token = lexAn.getNextToken()
     expect(token[0]).equal(TokenType.OP_ASSIGN)
@@ -146,6 +146,10 @@ describe("Lexical Analayser API", function () {
 
     token = lexAn.getNextToken()
     expect(token[0]).equal(TokenType.RP)
+    expect(token[1]).equal(null)
+
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.END)
     expect(token[1]).equal(null)
   })
 

@@ -5,7 +5,8 @@ exports.ExprEval = void 0;
  * Expression Evaluator.
  */
 var ExprEval = /** @class */ (function () {
-    function ExprEval() {
+    function ExprEval(variableStore) {
+        this.variableStore = variableStore;
     }
     return ExprEval;
 }());
