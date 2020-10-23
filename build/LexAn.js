@@ -197,6 +197,17 @@ var LexAn = /** @class */ (function () {
         this.currentToken = nextToken;
         return nextToken;
     };
+    LexAn.prototype.peekNextToken = function () {
+        // Save the current state.
+        var oldCurrentToken = this.currentToken;
+        var oldInputIndex = this.inputIndex;
+        // Extract the next token.
+        var nextToken = this.getNextToken();
+        // Restore the old state.
+        this.inputIndex = oldInputIndex;
+        this.currentToken = oldCurrentToken;
+        return nextToken;
+    };
     /**
      * Peek at the next character without incrementing current position.
      */
@@ -238,10 +249,11 @@ var LexAn = /** @class */ (function () {
     LexAn.prototype.extractIdentifier = function () {
         var extractedIdentifier = "";
         for (;;) {
-            var ch = this.inputText.charAt(this.inputIndex++);
+            var ch = this.inputText.charAt(this.inputIndex);
             // Note: an empty string is returned in ch if the index goes out of bounds.
             if (LexAn.isAlpha(ch)) {
                 extractedIdentifier = extractedIdentifier + ch;
+                this.inputIndex++;
             }
             else {
                 break;

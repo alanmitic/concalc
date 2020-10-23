@@ -149,12 +149,14 @@ var ExprEval = /** @class */ (function () {
                     variableValue = 0;
                     this.variableStore.set(variableName, variableValue);
                 }
-                //     // Get the next token, so that the token type of the next token
-                //     // is available to the caller of this function. If we have an
-                //     // assign "=" then process the terms after the assign to
-                //     // determine the value of the symbol.
-                //     if(m_pLex->GetToken() == CLex::OP_ASSIGN)
-                //         v = GetTerm();
+                // Have a look for the assing operator as the next token, if so
+                // we process the remainder as a new expression.
+                var peekedToken = lexAn.peekNextToken();
+                if (peekedToken[0] == LexAn_1.TokenType.OP_ASSIGN) {
+                    lexAn.getNextToken(); // Bump past assign token.
+                    variableValue = this.getTermPrecedence0(lexAn);
+                    this.variableStore.set(variableName, variableValue);
+                }
                 return variableValue;
             }
             default:

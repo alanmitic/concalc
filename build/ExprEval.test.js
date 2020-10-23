@@ -39,5 +39,10 @@ describe("Expression Evaluator API", function () {
         var ee = new ExprEval_1.ExprEval(vs);
         chai_1.expect(ee.evaluate("$myVar")).equal(0);
     });
+    it("should evaluate expressions with the variable assignments", function () {
+        var vs = new Map();
+        var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(ee.evaluate("$myVar=1234")).equal(1234);
+    });
 });
 //# sourceMappingURL=ExprEval.test.js.map

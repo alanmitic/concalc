@@ -226,6 +226,21 @@ export class LexAn {
         return nextToken
     }
 
+    peekNextToken(): Token {
+        // Save the current state.
+        let oldCurrentToken = this.currentToken;
+        let oldInputIndex = this.inputIndex;
+
+        // Extract the next token.
+        let nextToken = this.getNextToken();
+
+        // Restore the old state.
+        this.inputIndex = oldInputIndex;
+        this.currentToken = oldCurrentToken;
+
+        return nextToken;
+    }
+
     /**
      * Peek at the next character without incrementing current position.
      */
@@ -273,11 +288,12 @@ export class LexAn {
         let extractedIdentifier = ""
 
         for (; ;) {
-            let ch: string = this.inputText.charAt(this.inputIndex++)
+            let ch: string = this.inputText.charAt(this.inputIndex)
             // Note: an empty string is returned in ch if the index goes out of bounds.
 
             if (LexAn.isAlpha(ch)) {
                 extractedIdentifier = extractedIdentifier + ch
+                this.inputIndex++
             } else {
                 break;
             }

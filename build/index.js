@@ -39,5 +39,5 @@ rl.close();
 console.log("Console Calculator");
 var vs = new Map();
 var ee = new ExprEval_1.ExprEval(vs);
-console.log(ee.evaluate("2^16"));
+console.log(ee.evaluate("$a=1234"));
 //# sourceMappingURL=index.js.map
