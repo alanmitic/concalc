@@ -40,4 +40,4 @@ console.log("Console Calculator");
 
 let vs: VariableStore = new Map();
 let ee = new ExprEval(vs);
-console.log(ee.evaluate("$a=1234"))
+console.log(ee.evaluate("85|170"))

@@ -39,5 +39,5 @@ rl.close();
 console.log("Console Calculator");
 var vs = new Map();
 var ee = new ExprEval_1.ExprEval(vs);
-console.log(ee.evaluate("$a=1234"));
+console.log(ee.evaluate("85|170"));
 //# sourceMappingURL=index.js.map

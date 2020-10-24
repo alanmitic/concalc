@@ -68,9 +68,9 @@ export class ExprEval {
             let token: Token = lexAn.getNextToken()
 
             switch (token[0]) {
-                // case CLex::OP_BITWISE_OR:
-                // 	LeftTerm = (long)LeftTerm | (long)GetTerm(Precedence + 1);
-                // 	break;
+                case TokenType.OP_BITWISE_OR:
+                    term = Math.trunc(term) | Math.trunc(this.getTermPrecedence1(lexAn))
+                    return term;
 
                 case TokenType.RP: // Final exit point (result).
                     return term;
@@ -87,46 +87,150 @@ export class ExprEval {
     private getTermPrecedence1(lexAn: LexAn): number {
         let term: number = this.getTermPrecedence2(lexAn)
 
-        return term
+        for (; ;) {
+            let token: Token = lexAn.peekNextToken()
+
+            switch (token[0]) {
+                case TokenType.OP_BITWISE_XOR:
+                    lexAn.getNextToken()
+                    term = Math.trunc(term) ^ Math.trunc(this.getTermPrecedence2(lexAn))
+                    return term;
+
+                default:
+                    return term;
+            }
+        }
     }
 
     private getTermPrecedence2(lexAn: LexAn): number {
         let term: number = this.getTermPrecedence3(lexAn)
 
-        return term
+        for (; ;) {
+            let token: Token = lexAn.peekNextToken()
+            switch (token[0]) {
+                case TokenType.OP_BITWISE_AND:
+                    lexAn.getNextToken()
+                    term = Math.trunc(term) & Math.trunc(this.getTermPrecedence3(lexAn))
+                    return term;
+
+                default:
+                    return term;
+            }
+        }
     }
 
     private getTermPrecedence3(lexAn: LexAn): number {
         let term: number = this.getTermPrecedence4(lexAn)
+        for (; ;) {
+            let token: Token = lexAn.peekNextToken()
+            switch (token[0]) {
+                case TokenType.OP_LEFT_SHIFT: {
+                        lexAn.getNextToken()
+                        let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
+                        if(ShiftValue < 0 || ShiftValue > 31)
+                        {
+                            throw new ExprException("out of range shift value")
+                        }
+                        term = Math.trunc(term) << ShiftValue
+                    }
+                    break;
 
-        return term
+                case TokenType.OP_RIGHT_SHIFT: {
+                        lexAn.getNextToken()
+                        let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
+                        if(ShiftValue < 0 || ShiftValue > 31)
+                        {
+                            throw new ExprException("out of range shift value")
+                        }
+                        term = Math.trunc(term) >> ShiftValue
+                    }
+                    break;
+
+                case TokenType.OP_UNSIGNED_RIGHT_SHIFT: {
+                    lexAn.getNextToken()
+                    let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
+                    if(ShiftValue < 0 || ShiftValue > 31)
+                    {
+                        throw new ExprException("out of range shift value")
+                    }
+                    term = Math.trunc(term) >>> ShiftValue
+                }
+                break;
+
+                default:
+                    return term;
+            }
+        }
     }
 
     private getTermPrecedence4(lexAn: LexAn): number {
         let term: number = this.getTermPrecedence5(lexAn)
 
-        return term
+        for (; ;) {
+            let token: Token = lexAn.peekNextToken()
+            switch (token[0]) {
+                case TokenType.OP_PLUS:
+                    lexAn.getNextToken()
+                    term += this.getTermPrecedence5(lexAn);
+                    break;
+
+                case TokenType.OP_MINUS:
+                    lexAn.getNextToken()
+                    term -= this.getTermPrecedence5(lexAn);
+                    break;
+
+                default:
+                    return term;
+            }
+        }
     }
 
     private getTermPrecedence5(lexAn: LexAn): number {
         let term: number = this.getTermPrecedence6(lexAn)
+        for (; ;) {
+            let token: Token = lexAn.peekNextToken()
+            switch (token[0]) {
+                case TokenType.OP_MULTIPLY:
+                    lexAn.getNextToken()
+                    term *= this.getTermPrecedence6(lexAn);
+                    break;
 
-        return term
+                case TokenType.OP_DIVIDE: {
+                        lexAn.getNextToken()
+                        let rightTerm = this.getTermPrecedence6(lexAn);
+                        if (rightTerm === 0.0) {
+                            throw new ExprException("divide by zero")
+                        }
+
+                        term /= rightTerm;
+                    }
+                    break;
+
+                case TokenType.OP_MOD: {
+                        lexAn.getNextToken()
+                        let rightTerm = this.getTermPrecedence6(lexAn);
+                        if (rightTerm === 0.0) {
+                            throw new ExprException("divide by zero")
+                        }
+
+                        term = Math.trunc(term) % Math.trunc(rightTerm)
+                    }
+                    break;
+
+                default:
+                    return term;
+            }
+        }
     }
 
     private getTermPrecedence6(lexAn: LexAn): number {
         let term: number = this.getTermPrecedence7(lexAn)
-
-        return term
-    }
-
-    private getTermPrecedence7(lexAn: LexAn): number {
-        let term: number = this.getTermPrecedence8(lexAn)
         for (; ;) {
-            let token: Token = lexAn.getNextToken()
+            let token: Token = lexAn.peekNextToken()
             switch (token[0]) {
                 case TokenType.OP_POWER:
-                    term = Math.pow(term, this.getTermPrecedence8(lexAn));
+                    lexAn.getNextToken()
+                    term = Math.pow(term, this.getTermPrecedence7(lexAn));
                     break;
 
                 default:
@@ -146,20 +250,20 @@ export class ExprEval {
      * - Variable (plus optional assignment)
      * @param lexAn Lexical analyser to get token from.
      */
-    private getTermPrecedence8(lexAn: LexAn): number {
+    private getTermPrecedence7(lexAn: LexAn): number {
         let token: Token = lexAn.getNextToken()
         switch (token[0]) {
             case TokenType.NUMBER:
                 return token[1] as number
 
             case TokenType.OP_MINUS:
-                return -this.getTermPrecedence8(lexAn)
+                return -this.getTermPrecedence7(lexAn)
 
             case TokenType.OP_PLUS:
-                return this.getTermPrecedence8(lexAn)
+                return this.getTermPrecedence7(lexAn)
 
             case TokenType.OP_BITWISE_NOT:
-                return ~this.getTermPrecedence8(lexAn)
+                return ~Math.trunc(this.getTermPrecedence7(lexAn))
 
             case TokenType.LP: {
                 // Treat the expression after the parentheses as a new expression and evaluate.

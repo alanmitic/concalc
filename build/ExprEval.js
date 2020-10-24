@@ -61,9 +61,9 @@ var ExprEval = /** @class */ (function () {
          {
             var token = lexAn.getNextToken();
             switch (token[0]) {
-                // case CLex::OP_BITWISE_OR:
-                // 	LeftTerm = (long)LeftTerm | (long)GetTerm(Precedence + 1);
-                // 	break;
+                case LexAn_1.TokenType.OP_BITWISE_OR:
+                    term = Math.trunc(term) | Math.trunc(this.getTermPrecedence1(lexAn));
+                    return term;
                 case LexAn_1.TokenType.RP: // Final exit point (result).
                     return term;
                 case LexAn_1.TokenType.END: // Final exit point (result).
@@ -75,35 +75,132 @@ var ExprEval = /** @class */ (function () {
     };
     ExprEval.prototype.getTermPrecedence1 = function (lexAn) {
         var term = this.getTermPrecedence2(lexAn);
-        return term;
+        for (;;) {
+            var token = lexAn.peekNextToken();
+            switch (token[0]) {
+                case LexAn_1.TokenType.OP_BITWISE_XOR:
+                    lexAn.getNextToken();
+                    term = Math.trunc(term) ^ Math.trunc(this.getTermPrecedence2(lexAn));
+                    return term;
+                default:
+                    return term;
+            }
+        }
     };
     ExprEval.prototype.getTermPrecedence2 = function (lexAn) {
         var term = this.getTermPrecedence3(lexAn);
-        return term;
+        for (;;) {
+            var token = lexAn.peekNextToken();
+            switch (token[0]) {
+                case LexAn_1.TokenType.OP_BITWISE_AND:
+                    lexAn.getNextToken();
+                    term = Math.trunc(term) & Math.trunc(this.getTermPrecedence3(lexAn));
+                    return term;
+                default:
+                    return term;
+            }
+        }
     };
     ExprEval.prototype.getTermPrecedence3 = function (lexAn) {
         var term = this.getTermPrecedence4(lexAn);
-        return term;
+        for (;;) {
+            var token = lexAn.peekNextToken();
+            switch (token[0]) {
+                case LexAn_1.TokenType.OP_LEFT_SHIFT:
+                    {
+                        lexAn.getNextToken();
+                        var ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn));
+                        if (ShiftValue < 0 || ShiftValue > 31) {
+                            throw new ExprException("out of range shift value");
+                        }
+                        term = Math.trunc(term) << ShiftValue;
+                    }
+                    break;
+                case LexAn_1.TokenType.OP_RIGHT_SHIFT:
+                    {
+                        lexAn.getNextToken();
+                        var ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn));
+                        if (ShiftValue < 0 || ShiftValue > 31) {
+                            throw new ExprException("out of range shift value");
+                        }
+                        term = Math.trunc(term) >> ShiftValue;
+                    }
+                    break;
+                case LexAn_1.TokenType.OP_UNSIGNED_RIGHT_SHIFT:
+                    {
+                        lexAn.getNextToken();
+                        var ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn));
+                        if (ShiftValue < 0 || ShiftValue > 31) {
+                            throw new ExprException("out of range shift value");
+                        }
+                        term = Math.trunc(term) >>> ShiftValue;
+                    }
+                    break;
+                default:
+                    return term;
+            }
+        }
     };
     ExprEval.prototype.getTermPrecedence4 = function (lexAn) {
         var term = this.getTermPrecedence5(lexAn);
-        return term;
+        for (;;) {
+            var token = lexAn.peekNextToken();
+            switch (token[0]) {
+                case LexAn_1.TokenType.OP_PLUS:
+                    lexAn.getNextToken();
+                    term += this.getTermPrecedence5(lexAn);
+                    break;
+                case LexAn_1.TokenType.OP_MINUS:
+                    lexAn.getNextToken();
+                    term -= this.getTermPrecedence5(lexAn);
+                    break;
+                default:
+                    return term;
+            }
+        }
     };
     ExprEval.prototype.getTermPrecedence5 = function (lexAn) {
         var term = this.getTermPrecedence6(lexAn);
-        return term;
+        for (;;) {
+            var token = lexAn.peekNextToken();
+            switch (token[0]) {
+                case LexAn_1.TokenType.OP_MULTIPLY:
+                    lexAn.getNextToken();
+                    term *= this.getTermPrecedence6(lexAn);
+                    break;
+                case LexAn_1.TokenType.OP_DIVIDE:
+                    {
+                        lexAn.getNextToken();
+                        var rightTerm = this.getTermPrecedence6(lexAn);
+                        if (rightTerm === 0.0) {
+                            throw new ExprException("divide by zero");
+                        }
+                        term /= rightTerm;
+                    }
+                    break;
+                case LexAn_1.TokenType.OP_MOD:
+                    {
+                        lexAn.getNextToken();
+                        var rightTerm = this.getTermPrecedence6(lexAn);
+                        if (rightTerm === 0.0) {
+                            throw new ExprException("divide by zero");
+                        }
+                        term = Math.trunc(term) % Math.trunc(rightTerm);
+                    }
+                    break;
+                default:
+                    return term;
+            }
+        }
     };
     ExprEval.prototype.getTermPrecedence6 = function (lexAn) {
         var term = this.getTermPrecedence7(lexAn);
-        return term;
-    };
-    ExprEval.prototype.getTermPrecedence7 = function (lexAn) {
-        var term = this.getTermPrecedence8(lexAn);
         for (;;) {
-            var token = lexAn.getNextToken();
+            var token = lexAn.peekNextToken();
             switch (token[0]) {
                 case LexAn_1.TokenType.OP_POWER:
-                    term = Math.pow(term, this.getTermPrecedence8(lexAn));
+                    lexAn.getNextToken();
+                    term = Math.pow(term, this.getTermPrecedence7(lexAn));
                     break;
                 default:
                     return term;
@@ -121,17 +218,17 @@ var ExprEval = /** @class */ (function () {
      * - Variable (plus optional assignment)
      * @param lexAn Lexical analyser to get token from.
      */
-    ExprEval.prototype.getTermPrecedence8 = function (lexAn) {
+    ExprEval.prototype.getTermPrecedence7 = function (lexAn) {
         var token = lexAn.getNextToken();
         switch (token[0]) {
             case LexAn_1.TokenType.NUMBER:
                 return token[1];
             case LexAn_1.TokenType.OP_MINUS:
-                return -this.getTermPrecedence8(lexAn);
+                return -this.getTermPrecedence7(lexAn);
             case LexAn_1.TokenType.OP_PLUS:
-                return this.getTermPrecedence8(lexAn);
+                return this.getTermPrecedence7(lexAn);
             case LexAn_1.TokenType.OP_BITWISE_NOT:
-                return ~this.getTermPrecedence8(lexAn);
+                return ~Math.trunc(this.getTermPrecedence7(lexAn));
             case LexAn_1.TokenType.LP: {
                 // Treat the expression after the parentheses as a new expression and evaluate.
                 var term = this.getTermPrecedence0(lexAn);
