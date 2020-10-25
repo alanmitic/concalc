@@ -1,4 +1,4 @@
 # concalc
 Console Calculator for Node wirtten in TypeScript
 
-This is still under development
+This project is a Typescript + node learning exercise for myself.
