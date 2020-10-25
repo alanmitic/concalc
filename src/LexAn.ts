@@ -45,7 +45,9 @@ export enum TokenType {
     /** Right shift operator ">>". */
     OP_RIGHT_SHIFT,
     /** Unsigned right shift operator ">>>". */
-    OP_UNSIGNED_RIGHT_SHIFT
+    OP_UNSIGNED_RIGHT_SHIFT,
+    /** Command. */
+    COMMAND
 }
 
 export class LexAnException {
@@ -99,100 +101,105 @@ export class LexAn {
 
         let ch: string = this.inputText.charAt(this.inputIndex)
         switch (ch) {
-            case "#": // A comment
-                nextToken = [TokenType.END, null];
+            case "#":
+                nextToken = [TokenType.END, null]
+                break
+
+            case "@":
+                this.inputIndex++
+                nextToken = [TokenType.COMMAND, "@" + this.extractIdentifier()]
                 break
 
             case "(":
-                nextToken = [TokenType.LP, null];
-                this.inputIndex++;
-                break;
+                nextToken = [TokenType.LP, null]
+                this.inputIndex++
+                break
 
             case ")":
-                nextToken = [TokenType.RP, null];
-                this.inputIndex++;
-                break;
+                nextToken = [TokenType.RP, null]
+                this.inputIndex++
+                break
 
             case "=":
-                nextToken = [TokenType.OP_ASSIGN, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_ASSIGN, null]
+                this.inputIndex++
                 break
 
             case "&":
-                nextToken = [TokenType.OP_BITWISE_AND, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_BITWISE_AND, null]
+                this.inputIndex++
                 break
 
             case "~":
-                nextToken = [TokenType.OP_BITWISE_NOT, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_BITWISE_NOT, null]
+                this.inputIndex++
                 break
 
             case "|":
-                nextToken = [TokenType.OP_BITWISE_OR, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_BITWISE_OR, null]
+                this.inputIndex++
                 break
 
             case "'":
-                nextToken = [TokenType.OP_BITWISE_XOR, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_BITWISE_XOR, null]
+                this.inputIndex++
                 break
 
             case "/":
-                nextToken = [TokenType.OP_DIVIDE, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_DIVIDE, null]
+                this.inputIndex++
                 break
 
             case "<":
                 // Check for "<<"
                 if (this.peekNextChar() === "<") {
-                    this.inputIndex++;
-                    nextToken = [TokenType.OP_LEFT_SHIFT, null];
+                    this.inputIndex++
+                    nextToken = [TokenType.OP_LEFT_SHIFT, null]
                 } else {
-                    throw new LexAnException();
+                    throw new LexAnException()
                 }
-                this.inputIndex++;
+                this.inputIndex++
                 break
 
             case "-":
-                nextToken = [TokenType.OP_MINUS, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_MINUS, null]
+                this.inputIndex++
                 break
 
             case "%":
-                nextToken = [TokenType.OP_MOD, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_MOD, null]
+                this.inputIndex++
                 break
 
             case "*":
-                nextToken = [TokenType.OP_MULTIPLY, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_MULTIPLY, null]
+                this.inputIndex++
                 break
 
             case "+":
-                nextToken = [TokenType.OP_PLUS, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_PLUS, null]
+                this.inputIndex++
                 break
 
             case "^":
-                nextToken = [TokenType.OP_POWER, null];
-                this.inputIndex++;
+                nextToken = [TokenType.OP_POWER, null]
+                this.inputIndex++
                 break
 
             case ">":
                 // Need to check for ">>" or ">>>"
                 if (this.peekNextChar() === ">") {
-                    this.inputIndex++;
+                    this.inputIndex++
                     if (this.peekNextChar() === ">") {
-                        this.inputIndex++;
-                        nextToken = [TokenType.OP_UNSIGNED_RIGHT_SHIFT, null];
+                        this.inputIndex++
+                        nextToken = [TokenType.OP_UNSIGNED_RIGHT_SHIFT, null]
                     } else {
-                        nextToken = [TokenType.OP_RIGHT_SHIFT, null];
+                        nextToken = [TokenType.OP_RIGHT_SHIFT, null]
                     }
                 } else {
-                    throw new LexAnException();
+                    throw new LexAnException()
                 }
-                this.inputIndex++;
+                this.inputIndex++
                 break
 
             case "0":
@@ -218,7 +225,7 @@ export class LexAn {
                 if (LexAn.isAlpha(ch)) {
                     nextToken = [TokenType.IDENTIFIER, this.extractIdentifier()]
                 } else {
-                    throw new LexAnException();
+                    throw new LexAnException()
                 }
         }
 
@@ -228,17 +235,17 @@ export class LexAn {
 
     peekNextToken(): Token {
         // Save the current state.
-        let oldCurrentToken = this.currentToken;
-        let oldInputIndex = this.inputIndex;
+        let oldCurrentToken = this.currentToken
+        let oldInputIndex = this.inputIndex
 
         // Extract the next token.
-        let nextToken = this.getNextToken();
+        let nextToken = this.getNextToken()
 
         // Restore the old state.
-        this.inputIndex = oldInputIndex;
-        this.currentToken = oldCurrentToken;
+        this.inputIndex = oldInputIndex
+        this.currentToken = oldCurrentToken
 
-        return nextToken;
+        return nextToken
     }
 
     /**
@@ -263,7 +270,7 @@ export class LexAn {
      * Extracts the number from the current pocessing position in the input text.
      */
     public extractNumber(): number {
-        let extractedNumber: number = 0;
+        let extractedNumber: number = 0
         let extractedNumberString: string = ""
         for (; ;) {
             let ch: string = this.inputText.charAt(this.inputIndex)
@@ -273,11 +280,11 @@ export class LexAn {
                 extractedNumberString = extractedNumberString + ch
                 this.inputIndex++
             } else {
-                break;
+                break
             }
         }
 
-        return extractedNumber = parseInt(extractedNumberString);
+        return extractedNumber = parseInt(extractedNumberString)
     }
 
     /**
@@ -295,7 +302,7 @@ export class LexAn {
                 extractedIdentifier = extractedIdentifier + ch
                 this.inputIndex++
             } else {
-                break;
+                break
             }
         }
 
