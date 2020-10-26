@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var chai_1 = require("chai");
-var LexAn_1 = require("./LexAn");
+var LexAn_1 = require("../LexAn");
 describe("Lexical Analayser API", function () {
     it("should return END on an empty expression", function () {
         var lexAn;

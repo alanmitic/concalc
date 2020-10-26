@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { TokenType, Token, LexAn } from "./LexAn"
+import { TokenType, Token, LexAn } from "../LexAn"
 
 describe("Lexical Analayser API", function () {
   it("should return END on an empty expression", function () {

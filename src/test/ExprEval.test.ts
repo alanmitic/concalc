@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { ExprEval, VariableStore } from "./ExprEval"
+import { ExprEval, VariableStore } from "../ExprEval"
 
 describe("Expression Evaluator API", function () {
     it("should evaluate numbers in an expression", function () {

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var chai_1 = require("chai");
-var ExprEval_1 = require("./ExprEval");
+var ExprEval_1 = require("../ExprEval");
 describe("Expression Evaluator API", function () {
     it("should evaluate numbers in an expression", function () {
         var vs = new Map();
