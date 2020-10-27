@@ -1,6 +1,7 @@
 import { expect, use, spy } from "chai"
 import spies from 'chai-spies';
-import { CommandParser, CommandImplementor } from "../CommandParser"
+import { CommandExecutor } from "../../command/CommandExecutor"
+import { CommandImplementor } from "../../command/CommandParser";
 
 describe("Command Parser API", () => {
 
@@ -9,24 +10,26 @@ describe("Command Parser API", () => {
     }
 
     let onCommandExitSpy: any
-    let cmdParser: CommandParser
+    let cmdParser: CommandExecutor
 
     beforeEach(() => {
         use(spies)
 
         let mockCommandImplementor = new MockCommandImplementor()
         onCommandExitSpy = spy.on(mockCommandImplementor, 'onCommandExit')
-        cmdParser = new CommandParser(mockCommandImplementor)
+        cmdParser = new CommandExecutor(mockCommandImplementor)
     });
 
     it("should parse the exit command and call CommandImplementor.onCommandExit", () => {
-        cmdParser.parse("exit")
-        expect(onCommandExitSpy).to.have.been.called();
+        let isCommand = cmdParser.parse("exit")
+        expect(onCommandExitSpy).to.have.been.called()
+        expect(isCommand).equal(true)
     })
 
     it("should parse the quit command and call CommandImplementor.onCommandExit", () => {
-        cmdParser.parse("quit")
-        expect(onCommandExitSpy).to.have.been.called();
+        let isCommand = cmdParser.parse("quit")
+        expect(onCommandExitSpy).to.have.been.called()
+        expect(isCommand).equal(true)
     })
 
     xit("should detect unknown commands and throw an error", () => {

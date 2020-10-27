@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var chai_1 = require("chai");
 var chai_spies_1 = __importDefault(require("chai-spies"));
-var CommandParser_1 = require("../CommandParser");
+var CommandExecutor_1 = require("../../command/CommandExecutor");
 describe("Command Parser API", function () {
     var MockCommandImplementor = /** @class */ (function () {
         function MockCommandImplementor() {
@@ -19,18 +19,20 @@ describe("Command Parser API", function () {
         chai_1.use(chai_spies_1.default);
         var mockCommandImplementor = new MockCommandImplementor();
         onCommandExitSpy = chai_1.spy.on(mockCommandImplementor, 'onCommandExit');
-        cmdParser = new CommandParser_1.CommandParser(mockCommandImplementor);
+        cmdParser = new CommandExecutor_1.CommandExecutor(mockCommandImplementor);
     });
     it("should parse the exit command and call CommandImplementor.onCommandExit", function () {
-        cmdParser.parse("exit");
+        var isCommand = cmdParser.parse("exit");
         chai_1.expect(onCommandExitSpy).to.have.been.called();
+        chai_1.expect(isCommand).equal(true);
     });
     it("should parse the quit command and call CommandImplementor.onCommandExit", function () {
-        cmdParser.parse("quit");
+        var isCommand = cmdParser.parse("quit");
         chai_1.expect(onCommandExitSpy).to.have.been.called();
+        chai_1.expect(isCommand).equal(true);
     });
     xit("should detect unknown commands and throw an error", function () {
         chai_1.expect(function () { cmdParser.parse("@ABADCOMMAND"); }).to.throw("unknown command \"@ABADCOMMAND\"");
     });
 });
-//# sourceMappingURL=CommandParser.test.js.map
+//# sourceMappingURL=CommandExecutor.test.js.map

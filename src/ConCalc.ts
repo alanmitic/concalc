@@ -1,18 +1,19 @@
 import { ReadLine, createInterface } from "readline"
-import { CommandImplementor, CommandParser } from "./CommandParser"
+import { CommandExecutor } from "./command/CommandExecutor"
+import { CommandImplementor } from "./command/CommandParser"
 import { ExprEval, VariableStore } from "./ExprEval"
 
 export class ConCalc implements CommandImplementor {
     readonly ANSWER_VAR_NAME = "$ANS"
     vs: VariableStore
     ee: ExprEval
-    cmdParser: CommandParser
+    cmdParser: CommandExecutor
     rl: ReadLine
 
     constructor() {
         this.vs = new Map()
         this.ee = new ExprEval(this.vs)
-        this.cmdParser = new CommandParser(this)
+        this.cmdParser = new CommandExecutor(this)
 
         this.rl = createInterface({
             input: process.stdin,
