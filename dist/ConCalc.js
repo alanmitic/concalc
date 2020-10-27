@@ -26,24 +26,23 @@ var ConCalc = /** @class */ (function () {
             if (trimmedLine.startsWith("#")) {
                 return;
             }
-            // Check for commands, commands start with "@".
-            if (trimmedLine.startsWith("@")) {
-                try {
-                    _this.cmdParser.parse(trimmedLine);
-                }
-                catch (commandError) {
-                    console.error("[ERROR] " + commandError.message);
-                }
-                return;
-            }
-            // Assume anthing else is an expression, let the expression evalutor handle it.
+            var isCommand = false;
             try {
-                var eeResult = _this.ee.evaluate(trimmedLine);
-                _this.vs.set(_this.ANSWER_VAR_NAME, eeResult);
-                console.log("[" + _this.ANSWER_VAR_NAME + "] " + eeResult);
+                isCommand = _this.cmdParser.parse(trimmedLine);
             }
-            catch (exprError) {
-                console.error("[ERROR] " + exprError.message);
+            catch (commandError) {
+                console.error("[ERROR] " + commandError.message);
+            }
+            if (!isCommand) {
+                // Assume anthing else is an expression, let the expression evalutor handle it.
+                try {
+                    var eeResult = _this.ee.evaluate(trimmedLine);
+                    _this.vs.set(_this.ANSWER_VAR_NAME, eeResult);
+                    console.log("[" + _this.ANSWER_VAR_NAME + "] " + eeResult);
+                }
+                catch (exprError) {
+                    console.error("[ERROR] " + exprError.message);
+                }
             }
         });
     }

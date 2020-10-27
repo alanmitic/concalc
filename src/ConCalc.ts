@@ -33,23 +33,22 @@ export class ConCalc implements CommandImplementor {
                 return
             }
 
-            // Check for commands, commands start with "@".
-            if (trimmedLine.startsWith("@")) {
-                try {
-                    this.cmdParser.parse(trimmedLine)
-                } catch (commandError) {
-                    console.error("[ERROR] " + commandError.message)
-                }
-                return
+            let isCommand = false;
+            try {
+                isCommand = this.cmdParser.parse(trimmedLine)
+            } catch (commandError) {
+                console.error("[ERROR] " + commandError.message)
             }
 
-            // Assume anthing else is an expression, let the expression evalutor handle it.
-            try {
-                let eeResult = this.ee.evaluate(trimmedLine)
-                this.vs.set(this.ANSWER_VAR_NAME, eeResult)
-                console.log("[" + this.ANSWER_VAR_NAME + "] " + eeResult)
-            } catch (exprError) {
-                console.error("[ERROR] " + exprError.message)
+            if (!isCommand) {
+                // Assume anthing else is an expression, let the expression evalutor handle it.
+                try {
+                    let eeResult = this.ee.evaluate(trimmedLine)
+                    this.vs.set(this.ANSWER_VAR_NAME, eeResult)
+                    console.log("[" + this.ANSWER_VAR_NAME + "] " + eeResult)
+                } catch (exprError) {
+                    console.error("[ERROR] " + exprError.message)
+                }
             }
         })
     }

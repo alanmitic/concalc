@@ -18,23 +18,26 @@ export class CommandParser {
         this.commandImplementor = commandImplementor
     }
 
-    parse(commandString: string) {
+    parse(commandString: string): boolean {
+        let isCommand = false
+
         let lexAn = new LexAn(commandString)
         let nextToken = lexAn.getNextToken()
 
-        if (nextToken[0] !== TokenType.COMMAND) {
-            throw new CommandError("expected command type")
+        if (nextToken[0] === TokenType.IDENTIFIER) {
+            switch(nextToken[1]) {
+                case "quit":
+                case "exit":
+                    this.commandImplementor.onCommandExit()
+                    isCommand = true
+                    break
+
+                default:
+                    isCommand = false
+            }
         }
 
-        switch(nextToken[1]) {
-            case "@quit":
-            case "@exit":
-                this.commandImplementor.onCommandExit()
-                break
-
-            default:
-                throw new CommandError("unknown command \"" + nextToken[1] + "\"")
-        }
+        return isCommand
     }
 
 }

@@ -30,19 +30,21 @@ var CommandParser = /** @class */ (function () {
         this.commandImplementor = commandImplementor;
     }
     CommandParser.prototype.parse = function (commandString) {
+        var isCommand = false;
         var lexAn = new LexAn_1.LexAn(commandString);
         var nextToken = lexAn.getNextToken();
-        if (nextToken[0] !== LexAn_1.TokenType.COMMAND) {
-            throw new CommandError("expected command type");
+        if (nextToken[0] === LexAn_1.TokenType.IDENTIFIER) {
+            switch (nextToken[1]) {
+                case "quit":
+                case "exit":
+                    this.commandImplementor.onCommandExit();
+                    isCommand = true;
+                    break;
+                default:
+                    isCommand = false;
+            }
         }
-        switch (nextToken[1]) {
-            case "@quit":
-            case "@exit":
-                this.commandImplementor.onCommandExit();
-                break;
-            default:
-                throw new CommandError("unknown command \"" + nextToken[1] + "\"");
-        }
+        return isCommand;
     };
     return CommandParser;
 }());
