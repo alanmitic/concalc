@@ -28,7 +28,12 @@ var ConCalc = /** @class */ (function () {
             }
             // Check for commands, commands start with "@".
             if (trimmedLine.startsWith("@")) {
-                _this.cmdExec.execute(trimmedLine);
+                try {
+                    _this.cmdExec.execute(trimmedLine);
+                }
+                catch (commandError) {
+                    console.error("[ERROR] " + commandError.message);
+                }
                 return;
             }
             // Assume anthing else is an expression, let the expression evalutor handle it.

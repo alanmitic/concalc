@@ -20,7 +20,7 @@ export class ConCalc implements CommandImplementor {
             terminal: false
         })
 
-        this.rl.on('line',  (line: string) => {
+        this.rl.on('line', (line: string) => {
             let trimmedLine = line.trim()
 
             // Ignore empty lines.
@@ -35,7 +35,11 @@ export class ConCalc implements CommandImplementor {
 
             // Check for commands, commands start with "@".
             if (trimmedLine.startsWith("@")) {
-                this.cmdExec.execute(trimmedLine)
+                try {
+                    this.cmdExec.execute(trimmedLine)
+                } catch (commandError) {
+                    console.error("[ERROR] " + commandError.message)
+                }
                 return
             }
 
@@ -54,6 +58,3 @@ export class ConCalc implements CommandImplementor {
         this.rl.close()
     }
 }
-
-
-

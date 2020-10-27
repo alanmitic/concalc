@@ -4,9 +4,10 @@ export interface CommandImplementor {
     onCommandExit(): void
 }
 
-export class CommandException {
+export class CommandError extends Error {
     constructor(message: string) {
-
+        super(message)
+        this.name = "CommandError"
     }
 }
 
@@ -22,7 +23,7 @@ export class CommandExecutor {
         let nextToken = lexAn.getNextToken()
 
         if (nextToken[0] !== TokenType.COMMAND) {
-            throw new CommandException("expected command type")
+            throw new CommandError("expected command type")
         }
 
         switch(nextToken[1]) {
@@ -32,7 +33,7 @@ export class CommandExecutor {
                 break
 
             default:
-                throw new CommandException("unknown command " + nextToken[1])
+                throw new CommandError("unknown command " + nextToken[1])
         }
     }
 
