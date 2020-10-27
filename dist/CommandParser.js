@@ -27,21 +27,21 @@ var CommandError = /** @class */ (function (_super) {
 exports.CommandError = CommandError;
 var CommandParser = /** @class */ (function () {
     function CommandParser(commandImplementor) {
+        this.commandParserMap = new Map();
         this.commandImplementor = commandImplementor;
+        this.commandParserMap.set("EXIT", new ExitCommandParser());
+        this.commandParserMap.set("QUIT", new ExitCommandParser());
     }
     CommandParser.prototype.parse = function (commandString) {
         var isCommand = false;
         var lexAn = new LexAn_1.LexAn(commandString);
         var nextToken = lexAn.getNextToken();
         if (nextToken[0] === LexAn_1.TokenType.IDENTIFIER) {
-            switch (nextToken[1]) {
-                case "quit":
-                case "exit":
-                    this.commandImplementor.onCommandExit();
-                    isCommand = true;
-                    break;
-                default:
-                    isCommand = false;
+            var commandName = nextToken[1].toUpperCase();
+            var specificCommandParser = this.commandParserMap.get(commandName);
+            if (specificCommandParser !== undefined) {
+                isCommand = true;
+                specificCommandParser.parse(lexAn, this.commandImplementor);
             }
         }
         return isCommand;
@@ -49,4 +49,12 @@ var CommandParser = /** @class */ (function () {
     return CommandParser;
 }());
 exports.CommandParser = CommandParser;
+var ExitCommandParser = /** @class */ (function () {
+    function ExitCommandParser() {
+    }
+    ExitCommandParser.prototype.parse = function (lexAn, commandImplementor) {
+        commandImplementor.onCommandExit();
+    };
+    return ExitCommandParser;
+}());
 //# sourceMappingURL=CommandParser.js.map

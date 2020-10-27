@@ -14,8 +14,13 @@ export class CommandError extends Error {
 export class CommandParser {
     commandImplementor: CommandImplementor
 
+    commandParserMap: Map<string, SpecificCommandParser> = new Map()
+
     constructor(commandImplementor: CommandImplementor) {
         this.commandImplementor = commandImplementor
+
+        this.commandParserMap.set("EXIT", new ExitCommandParser())
+        this.commandParserMap.set("QUIT", new ExitCommandParser())
     }
 
     parse(commandString: string): boolean {
@@ -25,19 +30,25 @@ export class CommandParser {
         let nextToken = lexAn.getNextToken()
 
         if (nextToken[0] === TokenType.IDENTIFIER) {
-            switch(nextToken[1]) {
-                case "quit":
-                case "exit":
-                    this.commandImplementor.onCommandExit()
-                    isCommand = true
-                    break
-
-                default:
-                    isCommand = false
+            let commandName: string = (nextToken[1] as string).toUpperCase()
+            let specificCommandParser = this.commandParserMap.get(commandName)
+            if (specificCommandParser !== undefined) {
+                isCommand = true
+                specificCommandParser.parse(lexAn, this.commandImplementor)
             }
         }
 
         return isCommand
     }
-
 }
+
+interface SpecificCommandParser {
+    parse(lexAn: LexAn, commandImplementor: CommandImplementor): void
+}
+
+class ExitCommandParser implements SpecificCommandParser {
+    parse(lexAn: LexAn, commandImplementor: CommandImplementor): void {
+        commandImplementor.onCommandExit()
+    }
+}
+
