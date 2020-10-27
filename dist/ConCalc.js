@@ -39,7 +39,7 @@ var ConCalc = /** @class */ (function () {
                 try {
                     var eeResult = _this.ee.evaluate(trimmedLine);
                     _this.vs.set(_this.ANSWER_VAR_NAME, eeResult);
-                    console.log("[" + _this.ANSWER_VAR_NAME + "] " + eeResult);
+                    console.log("[RESULT] " + eeResult);
                 }
                 catch (exprError) {
                     console.error("[ERROR] " + exprError.message);
@@ -48,8 +48,9 @@ var ConCalc = /** @class */ (function () {
         });
     }
     ConCalc.prototype.onCommandVars = function () {
+        console.log("Variables store contains:");
         this.vs.forEach(function (value, key, map) {
-            console.log(key + " : " + value);
+            console.log(" - " + key + " : " + value);
         });
     };
     ConCalc.prototype.onCommandExit = function () {

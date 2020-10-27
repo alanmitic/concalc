@@ -14,7 +14,7 @@ var VarsCommandParser = /** @class */ (function () {
         return "VARS";
     };
     VarsCommandParser.prototype.getDescription = function () {
-        return "Output variables";
+        return "Output variables defined in the variables store.";
     };
     return VarsCommandParser;
 }());

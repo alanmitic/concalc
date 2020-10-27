@@ -14,9 +14,9 @@ export class HelpCommandParser implements CommandParser {
     }
 
     parse(lexAn: LexAn, commandImplementor: CommandImplementor): void {
-        console.log("Available Commands:")
+        console.log("\nThe following commands are available:")
         this.commandParserLut.forEach((value, key, map) => {
-            console.log(value.getUsage())
+            console.log(" - " + value.getUsage() + " : " + value.getDescription())
         });
     }
 
@@ -25,6 +25,6 @@ export class HelpCommandParser implements CommandParser {
     }
 
     getDescription(): string {
-        return "Gets help"
+        return "Displays help."
     }
 }

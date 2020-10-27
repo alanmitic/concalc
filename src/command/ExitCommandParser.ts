@@ -20,6 +20,6 @@ export class ExitCommandParser implements CommandParser {
     }
 
     getDescription(): string {
-        return "Exits this application"
+        return "Exits concalc application."
     }
 }

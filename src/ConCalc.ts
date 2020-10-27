@@ -47,7 +47,7 @@ export class ConCalc implements CommandImplementor {
                 try {
                     let eeResult = this.ee.evaluate(trimmedLine)
                     this.vs.set(this.ANSWER_VAR_NAME, eeResult)
-                    console.log("[" + this.ANSWER_VAR_NAME + "] " + eeResult)
+                    console.log("[RESULT] " + eeResult)
                 } catch (exprError) {
                     console.error("[ERROR] " + exprError.message)
                 }
@@ -55,8 +55,9 @@ export class ConCalc implements CommandImplementor {
         })
     }
     onCommandVars(): void {
+        console.log("Variables store contains:")
         this.vs.forEach((value, key, map) => {
-            console.log(key + " : " + value)
+            console.log(" - " + key + " : " + value)
         })
     }
 

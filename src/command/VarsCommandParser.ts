@@ -14,6 +14,6 @@ export class VarsCommandParser implements CommandParser {
     }
 
     getDescription(): string {
-        return "Output variables"
+        return "Output variables defined in the variables store."
     }
 }

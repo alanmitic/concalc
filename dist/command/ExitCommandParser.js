@@ -15,7 +15,7 @@ var ExitCommandParser = /** @class */ (function () {
         return this.isQuit ? "QUIT" : "EXIT";
     };
     ExitCommandParser.prototype.getDescription = function () {
-        return "Exits this application";
+        return "Exits concalc application.";
     };
     return ExitCommandParser;
 }());
