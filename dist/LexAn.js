@@ -62,8 +62,6 @@ var TokenType;
     TokenType[TokenType["OP_RIGHT_SHIFT"] = 18] = "OP_RIGHT_SHIFT";
     /** Unsigned right shift operator ">>>". */
     TokenType[TokenType["OP_UNSIGNED_RIGHT_SHIFT"] = 19] = "OP_UNSIGNED_RIGHT_SHIFT";
-    /** Command. */
-    TokenType[TokenType["COMMAND"] = 20] = "COMMAND";
 })(TokenType = exports.TokenType || (exports.TokenType = {}));
 var LexAnError = /** @class */ (function (_super) {
     __extends(LexAnError, _super);
@@ -107,10 +105,6 @@ var LexAn = /** @class */ (function () {
         switch (ch) {
             case "#":
                 nextToken = [TokenType.END, null];
-                break;
-            case "@":
-                this.inputIndex++;
-                nextToken = [TokenType.COMMAND, "@" + this.extractIdentifier()];
                 break;
             case "(":
                 nextToken = [TokenType.LP, null];

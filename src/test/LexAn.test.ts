@@ -180,16 +180,6 @@ describe("Lexical Analayser API", () => {
     expect(token[1]).equal("$MYVAR")
   })
 
-  it("should extract command names from an command string", () => {
-    let lexAn
-    let token: Token
-
-    lexAn = new LexAn("   \t@mycommand   \t  ")
-    token = lexAn.getNextToken()
-    expect(token[0]).equal(TokenType.COMMAND)
-    expect(token[1]).equal("@mycommand")
-  })
-
   it("should detect incomplete shift operator tokens and throw an error", () => {
     expect(() => {new LexAn(">").getNextToken()}).to.throw("incomplete token expected >> or >>>")
     expect(() => {new LexAn("<").getNextToken()}).to.throw("incomplete token expected <<")

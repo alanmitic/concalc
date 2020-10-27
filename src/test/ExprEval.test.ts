@@ -145,7 +145,7 @@ describe("Expression Evaluator API", () => {
     it("should detect syntax errors in expressions and throw an error", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
-        expect(() => {ee.evaluate("4@")}).to.throw("syntax error in expression")
+        expect(() => {ee.evaluate("4$")}).to.throw("syntax error in expression")
     })
 
     it("should detect out of range left shift values in expressions and throw an error", () => {

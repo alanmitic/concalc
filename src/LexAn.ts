@@ -45,9 +45,7 @@ export enum TokenType {
     /** Right shift operator ">>". */
     OP_RIGHT_SHIFT,
     /** Unsigned right shift operator ">>>". */
-    OP_UNSIGNED_RIGHT_SHIFT,
-    /** Command. */
-    COMMAND
+    OP_UNSIGNED_RIGHT_SHIFT
 }
 
 export class LexAnError extends Error {
@@ -106,11 +104,6 @@ export class LexAn {
         switch (ch) {
             case "#":
                 nextToken = [TokenType.END, null]
-                break
-
-            case "@":
-                this.inputIndex++
-                nextToken = [TokenType.COMMAND, "@" + this.extractIdentifier()]
                 break
 
             case "(":

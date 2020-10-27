@@ -107,7 +107,7 @@ describe("Expression Evaluator API", function () {
     it("should detect syntax errors in expressions and throw an error", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
-        chai_1.expect(function () { ee.evaluate("4@"); }).to.throw("syntax error in expression");
+        chai_1.expect(function () { ee.evaluate("4$"); }).to.throw("syntax error in expression");
     });
     it("should detect out of range left shift values in expressions and throw an error", function () {
         var vs = new Map();

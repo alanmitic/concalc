@@ -141,14 +141,6 @@ describe("Lexical Analayser API", function () {
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.VARIABLE);
         chai_1.expect(token[1]).equal("$MYVAR");
     });
-    it("should extract command names from an command string", function () {
-        var lexAn;
-        var token;
-        lexAn = new LexAn_1.LexAn("   \t@mycommand   \t  ");
-        token = lexAn.getNextToken();
-        chai_1.expect(token[0]).equal(LexAn_1.TokenType.COMMAND);
-        chai_1.expect(token[1]).equal("@mycommand");
-    });
     it("should detect incomplete shift operator tokens and throw an error", function () {
         chai_1.expect(function () { new LexAn_1.LexAn(">").getNextToken(); }).to.throw("incomplete token expected >> or >>>");
         chai_1.expect(function () { new LexAn_1.LexAn("<").getNextToken(); }).to.throw("incomplete token expected <<");
