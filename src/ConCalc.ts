@@ -5,6 +5,7 @@ import { ExprEval, VariableStore } from "./ExprEval"
 
 export class ConCalc implements CommandImplementor {
     readonly ANSWER_VAR_NAME = "$ANS"
+    readonly PROMPT = "CONCALC :> "
     vs: VariableStore
     ee: ExprEval
     cmdParser: CommandExecutor
@@ -22,16 +23,14 @@ export class ConCalc implements CommandImplementor {
             terminal: false
         })
 
+        this.displayPrompt()
+
         this.rl.on('line', (line: string) => {
             let trimmedLine = line.trim()
 
-            // Ignore empty lines.
-            if (trimmedLine.length === 0) {
-                return
-            }
-
-            // A comment line
-            if (trimmedLine.startsWith("#")) {
+            // Ignore empty lines and comment lines.
+            if (trimmedLine.length === 0 || trimmedLine.startsWith("#")) {
+                this.displayPrompt()
                 return
             }
 
@@ -52,8 +51,19 @@ export class ConCalc implements CommandImplementor {
                     console.error("[ERROR] " + exprError.message)
                 }
             }
+
+            this.displayPrompt()
+
+        }).on('close', () => {
+            process.exit(0)
         })
     }
+
+    displayPrompt() : void {
+        this.rl.setPrompt(this.PROMPT)
+        this.rl.prompt(true)
+    }
+
     onCommandVars(): void {
         console.log("Variables store contains:")
         this.vs.forEach((value, key, map) => {

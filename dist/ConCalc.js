@@ -8,6 +8,7 @@ var ConCalc = /** @class */ (function () {
     function ConCalc() {
         var _this = this;
         this.ANSWER_VAR_NAME = "$ANS";
+        this.PROMPT = "CONCALC :> ";
         this.vs = new Map();
         this.vs.set(this.ANSWER_VAR_NAME, 0);
         this.ee = new ExprEval_1.ExprEval(this.vs);
@@ -17,14 +18,12 @@ var ConCalc = /** @class */ (function () {
             output: process.stdout,
             terminal: false
         });
+        this.displayPrompt();
         this.rl.on('line', function (line) {
             var trimmedLine = line.trim();
-            // Ignore empty lines.
-            if (trimmedLine.length === 0) {
-                return;
-            }
-            // A comment line
-            if (trimmedLine.startsWith("#")) {
+            // Ignore empty lines and comment lines.
+            if (trimmedLine.length === 0 || trimmedLine.startsWith("#")) {
+                _this.displayPrompt();
                 return;
             }
             var isCommand = false;
@@ -45,8 +44,15 @@ var ConCalc = /** @class */ (function () {
                     console.error("[ERROR] " + exprError.message);
                 }
             }
+            _this.displayPrompt();
+        }).on('close', function () {
+            process.exit(0);
         });
     }
+    ConCalc.prototype.displayPrompt = function () {
+        this.rl.setPrompt(this.PROMPT);
+        this.rl.prompt(true);
+    };
     ConCalc.prototype.onCommandVars = function () {
         console.log("Variables store contains:");
         this.vs.forEach(function (value, key, map) {
