@@ -3,6 +3,7 @@ import { CommandImplementor, CommandExecutor } from "./CommandExecutor"
 import { ExprEval, VariableStore } from "./ExprEval"
 
 export class ConCalc implements CommandImplementor {
+    readonly ANSWER_VAR_NAME = "$ANS"
     vs: VariableStore
     ee: ExprEval
     cmdExec: CommandExecutor
@@ -39,8 +40,13 @@ export class ConCalc implements CommandImplementor {
             }
 
             // Assume anthing else is an expression, let the expression evalutor handle it.
-            let eeResult = this.ee.evaluate(trimmedLine)
-            console.log(eeResult)
+            try {
+                let eeResult = this.ee.evaluate(trimmedLine)
+                this.vs.set(this.ANSWER_VAR_NAME, eeResult)
+                console.log("[" + this.ANSWER_VAR_NAME + "] " + eeResult)
+            } catch (exprError) {
+                console.error("[ERROR] " + exprError.message)
+            }
         })
     }
 

@@ -170,14 +170,14 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal(5678)
   })
 
-  it("should extract variable names from an expression", function () {
+  it("should extract variable names from an expression and they should be in uppercase", function () {
     let lexAn
     let token: Token
 
     lexAn = new LexAn("   \t$myVar   \t  ")
     token = lexAn.getNextToken()
     expect(token[0]).equal(TokenType.VARIABLE)
-    expect(token[1]).equal("$myVar")
+    expect(token[1]).equal("$MYVAR")
   })
 
   it("should extract command names from an command string", function () {

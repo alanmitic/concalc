@@ -1,13 +1,30 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExprEval = exports.ExprException = void 0;
+exports.ExprEval = exports.ExprError = void 0;
 var LexAn_1 = require("./LexAn");
-var ExprException = /** @class */ (function () {
-    function ExprException(message) {
+var ExprError = /** @class */ (function (_super) {
+    __extends(ExprError, _super);
+    function ExprError(message) {
+        var _this = _super.call(this, message) || this;
+        _this.name = "ExprError";
+        return _this;
     }
-    return ExprException;
-}());
-exports.ExprException = ExprException;
+    return ExprError;
+}(Error));
+exports.ExprError = ExprError;
 /**
  * Expression Evaluator.
  */
@@ -16,17 +33,20 @@ var ExprEval = /** @class */ (function () {
         this.variableStore = variableStore;
     }
     ExprEval.prototype.evaluate = function (expression) {
-        var lexAn = new LexAn_1.LexAn(expression);
-        return this.getTermPrecedence0(lexAn);
+        try {
+            var lexAn = new LexAn_1.LexAn(expression);
+            return this.getTermPrecedence0(lexAn);
+        }
+        catch (lexAnError) {
+            throw new ExprError(lexAnError.message);
+        }
     };
     /**
      * 	This method evaluates term(s) in an expression, taking into account
      * operator precedence.
      *
-     * HIGH
-     *
      * Operator Name         | Operator      | Associative
-     * ---------------------------------------------------
+     * ------------------------------------------------------ HIGH
      * unary minus           | - expr        | (right-associative)
      * unary plus            | + expr        | (right-associative)
      * not (complement)      | ~ expr        | (right-associative)
@@ -51,8 +71,7 @@ var ExprEval = /** @class */ (function () {
      * or                      expr | expr     (left-associative)
      * -----------------------------------------------------------
      * simple assignment       $sym = expr     (right-associative)
-     * -----------------------------------------------------------
-     *
+     * ------------------------------------------------------- LOW
      * LOW
      */
     ExprEval.prototype.getTermPrecedence0 = function (lexAn) {
@@ -69,7 +88,7 @@ var ExprEval = /** @class */ (function () {
                 case LexAn_1.TokenType.END: // Final exit point (result).
                     return term;
                 default: // Systax error in the expression,
-                    throw new ExprException("syntax error in expression");
+                    throw new ExprError("syntax error in expression");
             }
         }
     };
@@ -111,7 +130,7 @@ var ExprEval = /** @class */ (function () {
                         lexAn.getNextToken();
                         var ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn));
                         if (ShiftValue < 0 || ShiftValue > 31) {
-                            throw new ExprException("out of range shift value");
+                            throw new ExprError("out of range shift value");
                         }
                         term = Math.trunc(term) << ShiftValue;
                     }
@@ -121,7 +140,7 @@ var ExprEval = /** @class */ (function () {
                         lexAn.getNextToken();
                         var ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn));
                         if (ShiftValue < 0 || ShiftValue > 31) {
-                            throw new ExprException("out of range shift value");
+                            throw new ExprError("out of range shift value");
                         }
                         term = Math.trunc(term) >> ShiftValue;
                     }
@@ -131,7 +150,7 @@ var ExprEval = /** @class */ (function () {
                         lexAn.getNextToken();
                         var ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn));
                         if (ShiftValue < 0 || ShiftValue > 31) {
-                            throw new ExprException("out of range shift value");
+                            throw new ExprError("out of range shift value");
                         }
                         term = Math.trunc(term) >>> ShiftValue;
                     }
@@ -173,7 +192,7 @@ var ExprEval = /** @class */ (function () {
                         lexAn.getNextToken();
                         var rightTerm = this.getTermPrecedence6(lexAn);
                         if (rightTerm === 0.0) {
-                            throw new ExprException("divide by zero");
+                            throw new ExprError("divide by zero");
                         }
                         term /= rightTerm;
                     }
@@ -183,7 +202,7 @@ var ExprEval = /** @class */ (function () {
                         lexAn.getNextToken();
                         var rightTerm = this.getTermPrecedence6(lexAn);
                         if (rightTerm === 0.0) {
-                            throw new ExprException("divide by zero");
+                            throw new ExprError("divide by zero");
                         }
                         term = Math.trunc(term) % Math.trunc(rightTerm);
                     }
@@ -234,7 +253,7 @@ var ExprEval = /** @class */ (function () {
                 var term = this.getTermPrecedence0(lexAn);
                 // Check expression should have ended on a right parentheses.
                 if (lexAn.getCurrentToken()[0] != LexAn_1.TokenType.RP) {
-                    throw new ExprException(") expected");
+                    throw new ExprError(") expected");
                 }
                 return term;
             }
@@ -257,7 +276,7 @@ var ExprEval = /** @class */ (function () {
                 return variableValue;
             }
             default:
-                throw new ExprException("primary expected");
+                throw new ExprError("primary expected");
         }
     };
     return ExprEval;

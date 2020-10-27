@@ -133,13 +133,13 @@ describe("Lexical Analayser API", function () {
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.NUMBER);
         chai_1.expect(token[1]).equal(5678);
     });
-    it("should extract variable names from an expression", function () {
+    it("should extract variable names from an expression and they should be in uppercase", function () {
         var lexAn;
         var token;
         lexAn = new LexAn_1.LexAn("   \t$myVar   \t  ");
         token = lexAn.getNextToken();
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.VARIABLE);
-        chai_1.expect(token[1]).equal("$myVar");
+        chai_1.expect(token[1]).equal("$MYVAR");
     });
     it("should extract command names from an command string", function () {
         var lexAn;

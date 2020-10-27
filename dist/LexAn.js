@@ -2,8 +2,21 @@
 /**
  * Lexical Analyser.
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LexAn = exports.LexAnException = exports.TokenType = void 0;
+exports.LexAn = exports.LexAnError = exports.TokenType = void 0;
 /**
  * TokenType indicating what the extracted text represents.
  */
@@ -27,7 +40,7 @@ var TokenType;
     TokenType[TokenType["OP_BITWISE_AND"] = 7] = "OP_BITWISE_AND";
     /** Bitwise not operator "~". */
     TokenType[TokenType["OP_BITWISE_NOT"] = 8] = "OP_BITWISE_NOT";
-    /** Bitwise or operator "|" or "?". */
+    /** Bitwise or operator "|". */
     TokenType[TokenType["OP_BITWISE_OR"] = 9] = "OP_BITWISE_OR";
     /** Bitwise exclusive or operator "'". */
     TokenType[TokenType["OP_BITWISE_XOR"] = 10] = "OP_BITWISE_XOR";
@@ -52,12 +65,16 @@ var TokenType;
     /** Command. */
     TokenType[TokenType["COMMAND"] = 20] = "COMMAND";
 })(TokenType = exports.TokenType || (exports.TokenType = {}));
-var LexAnException = /** @class */ (function () {
-    function LexAnException() {
+var LexAnError = /** @class */ (function (_super) {
+    __extends(LexAnError, _super);
+    function LexAnError(message) {
+        var _this = _super.call(this, message) || this;
+        _this.name = "LexAnError";
+        return _this;
     }
-    return LexAnException;
-}());
-exports.LexAnException = LexAnException;
+    return LexAnError;
+}(Error));
+exports.LexAnError = LexAnError;
 /**
  * Lexical Analyser
  */
@@ -134,7 +151,7 @@ var LexAn = /** @class */ (function () {
                     nextToken = [TokenType.OP_LEFT_SHIFT, null];
                 }
                 else {
-                    throw new LexAnException();
+                    throw new LexAnError("incomplete token expected <<");
                 }
                 this.inputIndex++;
                 break;
@@ -171,7 +188,7 @@ var LexAn = /** @class */ (function () {
                     }
                 }
                 else {
-                    throw new LexAnException();
+                    throw new LexAnError("incomplete token expected >> or >>>");
                 }
                 this.inputIndex++;
                 break;
@@ -189,7 +206,7 @@ var LexAn = /** @class */ (function () {
                 break;
             case "$":
                 this.inputIndex++;
-                nextToken = [TokenType.VARIABLE, "$" + this.extractIdentifier()];
+                nextToken = [TokenType.VARIABLE, "$" + this.extractIdentifier().toLocaleUpperCase()];
                 break;
             default:
                 // Error
@@ -197,7 +214,7 @@ var LexAn = /** @class */ (function () {
                     nextToken = [TokenType.IDENTIFIER, this.extractIdentifier()];
                 }
                 else {
-                    throw new LexAnException();
+                    throw new LexAnError("Unknown token " + ch);
                 }
         }
         this.currentToken = nextToken;

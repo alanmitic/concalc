@@ -7,6 +7,7 @@ var ExprEval_1 = require("./ExprEval");
 var ConCalc = /** @class */ (function () {
     function ConCalc() {
         var _this = this;
+        this.ANSWER_VAR_NAME = "$ANS";
         this.vs = new Map();
         this.ee = new ExprEval_1.ExprEval(this.vs);
         this.cmdExec = new CommandExecutor_1.CommandExecutor(this);
@@ -31,8 +32,14 @@ var ConCalc = /** @class */ (function () {
                 return;
             }
             // Assume anthing else is an expression, let the expression evalutor handle it.
-            var eeResult = _this.ee.evaluate(trimmedLine);
-            console.log(eeResult);
+            try {
+                var eeResult = _this.ee.evaluate(trimmedLine);
+                _this.vs.set(_this.ANSWER_VAR_NAME, eeResult);
+                console.log("[" + _this.ANSWER_VAR_NAME + "] " + eeResult);
+            }
+            catch (exprError) {
+                console.error("[ERROR] " + exprError.message);
+            }
         });
     }
     ConCalc.prototype.onCommandExit = function () {

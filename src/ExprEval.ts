@@ -1,10 +1,11 @@
-import { LexAn, Token, TokenType } from "./LexAn"
+import { LexAn, LexAnError, Token, TokenType } from "./LexAn"
 
 export type VariableStore = Map<String, number>;
 
-export class ExprException {
+export class ExprError extends Error {
     constructor(message: string) {
-
+        super(message)
+        this.name = "ExprError"
     }
 }
 
@@ -20,18 +21,20 @@ export class ExprEval {
     }
 
     evaluate(expression: string): number {
-        let lexAn: LexAn = new LexAn(expression);
-        return this.getTermPrecedence0(lexAn)
+        try {
+            let lexAn: LexAn = new LexAn(expression)
+            return this.getTermPrecedence0(lexAn)
+        } catch (lexAnError) {
+            throw new ExprError(lexAnError.message)
+        }
     }
 
     /**
      * 	This method evaluates term(s) in an expression, taking into account
      * operator precedence.
      *
-     * HIGH
-     *
      * Operator Name         | Operator      | Associative
-     * ---------------------------------------------------
+     * ------------------------------------------------------ HIGH
      * unary minus           | - expr        | (right-associative)
      * unary plus            | + expr        | (right-associative)
      * not (complement)      | ~ expr        | (right-associative)
@@ -56,8 +59,7 @@ export class ExprEval {
      * or                      expr | expr     (left-associative)
      * -----------------------------------------------------------
      * simple assignment       $sym = expr     (right-associative)
-     * -----------------------------------------------------------
-     *
+     * ------------------------------------------------------- LOW
      * LOW
      */
     private getTermPrecedence0(lexAn: LexAn): number {
@@ -70,16 +72,16 @@ export class ExprEval {
             switch (token[0]) {
                 case TokenType.OP_BITWISE_OR:
                     term = Math.trunc(term) | Math.trunc(this.getTermPrecedence1(lexAn))
-                    return term;
+                    return term
 
                 case TokenType.RP: // Final exit point (result).
-                    return term;
+                    return term
 
                 case TokenType.END: // Final exit point (result).
-                    return term;
+                    return term
 
                 default: // Systax error in the expression,
-                    throw new ExprException("syntax error in expression");
+                    throw new ExprError("syntax error in expression")
             }
         }
     }
@@ -94,10 +96,10 @@ export class ExprEval {
                 case TokenType.OP_BITWISE_XOR:
                     lexAn.getNextToken()
                     term = Math.trunc(term) ^ Math.trunc(this.getTermPrecedence2(lexAn))
-                    return term;
+                    return term
 
                 default:
-                    return term;
+                    return term
             }
         }
     }
@@ -111,10 +113,10 @@ export class ExprEval {
                 case TokenType.OP_BITWISE_AND:
                     lexAn.getNextToken()
                     term = Math.trunc(term) & Math.trunc(this.getTermPrecedence3(lexAn))
-                    return term;
+                    return term
 
                 default:
-                    return term;
+                    return term
             }
         }
     }
@@ -125,40 +127,37 @@ export class ExprEval {
             let token: Token = lexAn.peekNextToken()
             switch (token[0]) {
                 case TokenType.OP_LEFT_SHIFT: {
-                        lexAn.getNextToken()
-                        let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
-                        if(ShiftValue < 0 || ShiftValue > 31)
-                        {
-                            throw new ExprException("out of range shift value")
-                        }
-                        term = Math.trunc(term) << ShiftValue
+                    lexAn.getNextToken()
+                    let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
+                    if (ShiftValue < 0 || ShiftValue > 31) {
+                        throw new ExprError("out of range shift value")
                     }
-                    break;
+                    term = Math.trunc(term) << ShiftValue
+                }
+                    break
 
                 case TokenType.OP_RIGHT_SHIFT: {
-                        lexAn.getNextToken()
-                        let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
-                        if(ShiftValue < 0 || ShiftValue > 31)
-                        {
-                            throw new ExprException("out of range shift value")
-                        }
-                        term = Math.trunc(term) >> ShiftValue
+                    lexAn.getNextToken()
+                    let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
+                    if (ShiftValue < 0 || ShiftValue > 31) {
+                        throw new ExprError("out of range shift value")
                     }
-                    break;
+                    term = Math.trunc(term) >> ShiftValue
+                }
+                    break
 
                 case TokenType.OP_UNSIGNED_RIGHT_SHIFT: {
                     lexAn.getNextToken()
                     let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
-                    if(ShiftValue < 0 || ShiftValue > 31)
-                    {
-                        throw new ExprException("out of range shift value")
+                    if (ShiftValue < 0 || ShiftValue > 31) {
+                        throw new ExprError("out of range shift value")
                     }
                     term = Math.trunc(term) >>> ShiftValue
                 }
-                break;
+                    break
 
                 default:
-                    return term;
+                    return term
             }
         }
     }
@@ -171,16 +170,16 @@ export class ExprEval {
             switch (token[0]) {
                 case TokenType.OP_PLUS:
                     lexAn.getNextToken()
-                    term += this.getTermPrecedence5(lexAn);
-                    break;
+                    term += this.getTermPrecedence5(lexAn)
+                    break
 
                 case TokenType.OP_MINUS:
                     lexAn.getNextToken()
-                    term -= this.getTermPrecedence5(lexAn);
-                    break;
+                    term -= this.getTermPrecedence5(lexAn)
+                    break
 
                 default:
-                    return term;
+                    return term
             }
         }
     }
@@ -192,33 +191,33 @@ export class ExprEval {
             switch (token[0]) {
                 case TokenType.OP_MULTIPLY:
                     lexAn.getNextToken()
-                    term *= this.getTermPrecedence6(lexAn);
-                    break;
+                    term *= this.getTermPrecedence6(lexAn)
+                    break
 
                 case TokenType.OP_DIVIDE: {
-                        lexAn.getNextToken()
-                        let rightTerm = this.getTermPrecedence6(lexAn);
-                        if (rightTerm === 0.0) {
-                            throw new ExprException("divide by zero")
-                        }
-
-                        term /= rightTerm;
+                    lexAn.getNextToken()
+                    let rightTerm = this.getTermPrecedence6(lexAn)
+                    if (rightTerm === 0.0) {
+                        throw new ExprError("divide by zero")
                     }
-                    break;
+
+                    term /= rightTerm
+                }
+                    break
 
                 case TokenType.OP_MOD: {
-                        lexAn.getNextToken()
-                        let rightTerm = this.getTermPrecedence6(lexAn);
-                        if (rightTerm === 0.0) {
-                            throw new ExprException("divide by zero")
-                        }
-
-                        term = Math.trunc(term) % Math.trunc(rightTerm)
+                    lexAn.getNextToken()
+                    let rightTerm = this.getTermPrecedence6(lexAn)
+                    if (rightTerm === 0.0) {
+                        throw new ExprError("divide by zero")
                     }
-                    break;
+
+                    term = Math.trunc(term) % Math.trunc(rightTerm)
+                }
+                    break
 
                 default:
-                    return term;
+                    return term
             }
         }
     }
@@ -230,11 +229,11 @@ export class ExprEval {
             switch (token[0]) {
                 case TokenType.OP_POWER:
                     lexAn.getNextToken()
-                    term = Math.pow(term, this.getTermPrecedence7(lexAn));
-                    break;
+                    term = Math.pow(term, this.getTermPrecedence7(lexAn))
+                    break
 
                 default:
-                    return term;
+                    return term
             }
         }
     }
@@ -271,18 +270,18 @@ export class ExprEval {
 
                 // Check expression should have ended on a right parentheses.
                 if ((lexAn.getCurrentToken() as Token)[0] != TokenType.RP) {
-                    throw new ExprException(") expected");
+                    throw new ExprError(") expected")
                 }
 
-                return term;
+                return term
             }
 
             case TokenType.VARIABLE: {
-                let variableName = token[1] as string;
+                let variableName = token[1] as string
                 let variableValue = this.variableStore.get(variableName)
                 if (variableValue === undefined) {
                     // Variable does not exist, create it.
-                    variableValue = 0;
+                    variableValue = 0
                     this.variableStore.set(variableName, variableValue)
                 }
 
@@ -298,9 +297,8 @@ export class ExprEval {
                 return variableValue as number
             }
 
-
             default:
-                throw new ExprException("primary expected");
+                throw new ExprError("primary expected")
         }
     }
 

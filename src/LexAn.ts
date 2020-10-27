@@ -24,7 +24,7 @@ export enum TokenType {
     OP_BITWISE_AND,
     /** Bitwise not operator "~". */
     OP_BITWISE_NOT,
-    /** Bitwise or operator "|" or "?". */
+    /** Bitwise or operator "|". */
     OP_BITWISE_OR,
     /** Bitwise exclusive or operator "'". */
     OP_BITWISE_XOR,
@@ -50,8 +50,11 @@ export enum TokenType {
     COMMAND
 }
 
-export class LexAnException {
-
+export class LexAnError extends Error {
+    constructor(message: string) {
+        super(message)
+        this.name = "LexAnError"
+    }
 }
 
 /**
@@ -156,7 +159,7 @@ export class LexAn {
                     this.inputIndex++
                     nextToken = [TokenType.OP_LEFT_SHIFT, null]
                 } else {
-                    throw new LexAnException()
+                    throw new LexAnError("incomplete token expected <<")
                 }
                 this.inputIndex++
                 break
@@ -197,7 +200,7 @@ export class LexAn {
                         nextToken = [TokenType.OP_RIGHT_SHIFT, null]
                     }
                 } else {
-                    throw new LexAnException()
+                    throw new LexAnError("incomplete token expected >> or >>>")
                 }
                 this.inputIndex++
                 break
@@ -217,7 +220,7 @@ export class LexAn {
 
             case "$":
                 this.inputIndex++
-                nextToken = [TokenType.VARIABLE, "$" + this.extractIdentifier()]
+                nextToken = [TokenType.VARIABLE, "$" + this.extractIdentifier().toLocaleUpperCase()]
                 break
 
             default:
@@ -225,7 +228,7 @@ export class LexAn {
                 if (LexAn.isAlpha(ch)) {
                     nextToken = [TokenType.IDENTIFIER, this.extractIdentifier()]
                 } else {
-                    throw new LexAnException()
+                    throw new LexAnError("Unknown token " + ch)
                 }
         }
 
