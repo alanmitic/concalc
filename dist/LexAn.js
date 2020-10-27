@@ -214,7 +214,7 @@ var LexAn = /** @class */ (function () {
                     nextToken = [TokenType.IDENTIFIER, this.extractIdentifier()];
                 }
                 else {
-                    throw new LexAnError("Unknown token " + ch);
+                    throw new LexAnError("Unknown token \"" + ch + "\"");
                 }
         }
         this.currentToken = nextToken;

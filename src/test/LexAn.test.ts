@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { TokenType, Token, LexAn } from "../LexAn"
+import { TokenType, Token, LexAn, LexAnError } from "../LexAn"
 
 describe("Lexical Analayser API", function () {
   it("should return END on an empty expression", function () {
@@ -190,6 +190,14 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal("@mycommand")
   })
 
+  it("should detect incomplete shift operator tokens and throw an error", function () {
+    expect(() => {new LexAn(">").getNextToken()}).to.throw("incomplete token expected >> or >>>")
+    expect(() => {new LexAn("<").getNextToken()}).to.throw("incomplete token expected <<")
+  })
+
+  it("should detect unknown tokens and throw an error", function () {
+    expect(() => {new LexAn("_").getNextToken()}).to.throw("Unknown token \"_\"")
+  })
 })
 
 describe("Lexical Analayser helper methods", function () {

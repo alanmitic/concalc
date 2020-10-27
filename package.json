@@ -8,7 +8,7 @@
     "start:dev": "nodemon",
     "start": "npm run build && node dist/index.js",
     "build": "npm run clean && tsc && npm run test",
-    "test": "nyc mocha ./dist/test/*.test.js"
+    "test": "nyc --reporter=html --reporter=text mocha ./dist/test/*.test.js"
   },
   "keywords": [],
   "author": "",

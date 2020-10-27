@@ -99,5 +99,40 @@ describe("Expression Evaluator API", function () {
         var ee = new ExprEval_1.ExprEval(vs);
         chai_1.expect(ee.evaluate("$myVar=1234")).equal(1234);
     });
+    it("should detect missing primary in expressions and throw an error", function () {
+        var vs = new Map();
+        var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate(""); }).to.throw("primary expected");
+    });
+    it("should detect syntax errors in expressions and throw an error", function () {
+        var vs = new Map();
+        var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("4@"); }).to.throw("syntax error in expression");
+    });
+    it("should detect out of range left shift values in expressions and throw an error", function () {
+        var vs = new Map();
+        var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("1<<32"); }).to.throw("out of range shift value");
+        chai_1.expect(function () { ee.evaluate("1<<-1"); }).to.throw("out of range shift value");
+    });
+    it("should detect out of range right shift values in expressions and throw an error", function () {
+        var vs = new Map();
+        var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("1>>32"); }).to.throw("out of range shift value");
+        chai_1.expect(function () { ee.evaluate("1>>-1"); }).to.throw("out of range shift value");
+        chai_1.expect(function () { ee.evaluate("1>>>32"); }).to.throw("out of range shift value");
+        chai_1.expect(function () { ee.evaluate("1>>>-1"); }).to.throw("out of range shift value");
+    });
+    it("should detect divide by zero conditions in expressions and throw an error", function () {
+        var vs = new Map();
+        var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("1/0"); }).to.throw("divide by zero");
+        chai_1.expect(function () { ee.evaluate("1%0"); }).to.throw("divide by zero");
+    });
+    it("should missing closing parenthesis in expressions and throw an error", function () {
+        var vs = new Map();
+        var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("3 * (2/8"); }).to.throw(") expected");
+    });
 });
 //# sourceMappingURL=ExprEval.test.js.map

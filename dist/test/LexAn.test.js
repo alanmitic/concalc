@@ -149,6 +149,13 @@ describe("Lexical Analayser API", function () {
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.COMMAND);
         chai_1.expect(token[1]).equal("@mycommand");
     });
+    it("should detect incomplete shift operator tokens and throw an error", function () {
+        chai_1.expect(function () { new LexAn_1.LexAn(">").getNextToken(); }).to.throw("incomplete token expected >> or >>>");
+        chai_1.expect(function () { new LexAn_1.LexAn("<").getNextToken(); }).to.throw("incomplete token expected <<");
+    });
+    it("should detect unknown tokens and throw an error", function () {
+        chai_1.expect(function () { new LexAn_1.LexAn("_").getNextToken(); }).to.throw("Unknown token \"_\"");
+    });
 });
 describe("Lexical Analayser helper methods", function () {
     it("should detect whitespaces characters correctly", function () {

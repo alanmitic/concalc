@@ -228,7 +228,7 @@ export class LexAn {
                 if (LexAn.isAlpha(ch)) {
                     nextToken = [TokenType.IDENTIFIER, this.extractIdentifier()]
                 } else {
-                    throw new LexAnError("Unknown token " + ch)
+                    throw new LexAnError("Unknown token \"" + ch + "\"")
                 }
         }
 
