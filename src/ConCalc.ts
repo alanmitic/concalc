@@ -2,6 +2,7 @@ import { ReadLine, createInterface } from "readline"
 import { CommandExecutor } from "./command/CommandExecutor"
 import { CommandImplementor } from "./command/CommandParser"
 import { ExprEval, VariableStore } from "./ExprEval"
+import { ResultFormatter } from "./ResultFormatter"
 
 export class ConCalc implements CommandImplementor {
     readonly ANSWER_VAR_NAME = "$ANS"
@@ -10,6 +11,7 @@ export class ConCalc implements CommandImplementor {
     ee: ExprEval
     cmdParser: CommandExecutor
     rl: ReadLine
+    rf = new ResultFormatter()
 
     constructor() {
         this.vs = new Map()
@@ -46,7 +48,7 @@ export class ConCalc implements CommandImplementor {
                 try {
                     let eeResult = this.ee.evaluate(trimmedLine)
                     this.vs.set(this.ANSWER_VAR_NAME, eeResult)
-                    console.log("[RESULT] " + eeResult)
+                    console.log("[RESULT] " + this.rf.format(eeResult))
                 } catch (exprError) {
                     console.error("[ERROR] " + exprError.message)
                 }

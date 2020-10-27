@@ -4,11 +4,13 @@ exports.ConCalc = void 0;
 var readline_1 = require("readline");
 var CommandExecutor_1 = require("./command/CommandExecutor");
 var ExprEval_1 = require("./ExprEval");
+var ResultFormatter_1 = require("./ResultFormatter");
 var ConCalc = /** @class */ (function () {
     function ConCalc() {
         var _this = this;
         this.ANSWER_VAR_NAME = "$ANS";
         this.PROMPT = "CONCALC :> ";
+        this.rf = new ResultFormatter_1.ResultFormatter();
         this.vs = new Map();
         this.vs.set(this.ANSWER_VAR_NAME, 0);
         this.ee = new ExprEval_1.ExprEval(this.vs);
@@ -38,7 +40,7 @@ var ConCalc = /** @class */ (function () {
                 try {
                     var eeResult = _this.ee.evaluate(trimmedLine);
                     _this.vs.set(_this.ANSWER_VAR_NAME, eeResult);
-                    console.log("[RESULT] " + eeResult);
+                    console.log("[RESULT] " + _this.rf.format(eeResult));
                 }
                 catch (exprError) {
                     console.error("[ERROR] " + exprError.message);
