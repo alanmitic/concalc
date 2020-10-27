@@ -2,6 +2,7 @@ import { LexAn, Token, TokenType } from "../LexAn"
 import { CommandImplementor, CommandParser, CommandParserLookupTable } from "./CommandParser"
 import { ExitCommandParser } from "./ExitCommandParser"
 import { HelpCommandParser } from "./HelpCommandParser"
+import { VarsCommandParser } from "./VarsCommandParser"
 
 export class CommandExecutor {
     commandImplementor: CommandImplementor
@@ -14,7 +15,7 @@ export class CommandExecutor {
         this.commandParserLut.set("EXIT", new ExitCommandParser(false))
         this.commandParserLut.set("HELP", new HelpCommandParser(this.commandParserLut))
         this.commandParserLut.set("QUIT", new ExitCommandParser(true))
-        // VARS -> Dumps variables in the variable store.
+        this.commandParserLut.set("VARS", new VarsCommandParser())
         // FIX ->
         // SCI ->
         // GEN ->

@@ -9,6 +9,7 @@ var ConCalc = /** @class */ (function () {
         var _this = this;
         this.ANSWER_VAR_NAME = "$ANS";
         this.vs = new Map();
+        this.vs.set(this.ANSWER_VAR_NAME, 0);
         this.ee = new ExprEval_1.ExprEval(this.vs);
         this.cmdParser = new CommandExecutor_1.CommandExecutor(this);
         this.rl = readline_1.createInterface({
@@ -46,6 +47,11 @@ var ConCalc = /** @class */ (function () {
             }
         });
     }
+    ConCalc.prototype.onCommandVars = function () {
+        this.vs.forEach(function (value, key, map) {
+            console.log(key + " : " + value);
+        });
+    };
     ConCalc.prototype.onCommandExit = function () {
         this.rl.close();
     };

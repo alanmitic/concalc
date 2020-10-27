@@ -10,29 +10,34 @@ describe("Command Parser API", function () {
     var MockCommandImplementor = /** @class */ (function () {
         function MockCommandImplementor() {
         }
+        MockCommandImplementor.prototype.onCommandVars = function () { };
         MockCommandImplementor.prototype.onCommandExit = function () { };
         return MockCommandImplementor;
     }());
     var onCommandExitSpy;
-    var cmdParser;
+    var onCommandVarsSpy;
+    var cmdExec;
     beforeEach(function () {
         chai_1.use(chai_spies_1.default);
         var mockCommandImplementor = new MockCommandImplementor();
-        onCommandExitSpy = chai_1.spy.on(mockCommandImplementor, 'onCommandExit');
-        cmdParser = new CommandExecutor_1.CommandExecutor(mockCommandImplementor);
+        onCommandVarsSpy = chai_1.spy.on(mockCommandImplementor, "onCommandVars");
+        onCommandExitSpy = chai_1.spy.on(mockCommandImplementor, "onCommandExit");
+        cmdExec = new CommandExecutor_1.CommandExecutor(mockCommandImplementor);
     });
     it("should parse the exit command and call CommandImplementor.onCommandExit", function () {
-        var isCommand = cmdParser.parse("exit");
+        chai_1.expect(cmdExec.parse("exit")).equal(true);
         chai_1.expect(onCommandExitSpy).to.have.been.called();
-        chai_1.expect(isCommand).equal(true);
     });
     it("should parse the quit command and call CommandImplementor.onCommandExit", function () {
-        var isCommand = cmdParser.parse("quit");
+        chai_1.expect(cmdExec.parse("quit")).equal(true);
         chai_1.expect(onCommandExitSpy).to.have.been.called();
-        chai_1.expect(isCommand).equal(true);
+    });
+    it("should parse the vars command and call CommandImplementor.onCommandVars", function () {
+        chai_1.expect(cmdExec.parse("vars")).equal(true);
+        chai_1.expect(onCommandVarsSpy).to.have.been.called();
     });
     xit("should detect unknown commands and throw an error", function () {
-        chai_1.expect(function () { cmdParser.parse("@ABADCOMMAND"); }).to.throw("unknown command \"@ABADCOMMAND\"");
+        chai_1.expect(function () { cmdExec.parse("@ABADCOMMAND"); }).to.throw("unknown command \"@ABADCOMMAND\"");
     });
 });
 //# sourceMappingURL=CommandExecutor.test.js.map

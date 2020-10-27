@@ -4,6 +4,7 @@ exports.CommandExecutor = void 0;
 var LexAn_1 = require("../LexAn");
 var ExitCommandParser_1 = require("./ExitCommandParser");
 var HelpCommandParser_1 = require("./HelpCommandParser");
+var VarsCommandParser_1 = require("./VarsCommandParser");
 var CommandExecutor = /** @class */ (function () {
     function CommandExecutor(commandImplementor) {
         this.commandParserLut = new Map();
@@ -11,7 +12,7 @@ var CommandExecutor = /** @class */ (function () {
         this.commandParserLut.set("EXIT", new ExitCommandParser_1.ExitCommandParser(false));
         this.commandParserLut.set("HELP", new HelpCommandParser_1.HelpCommandParser(this.commandParserLut));
         this.commandParserLut.set("QUIT", new ExitCommandParser_1.ExitCommandParser(true));
-        // VARS -> Dumps variables in the variable store.
+        this.commandParserLut.set("VARS", new VarsCommandParser_1.VarsCommandParser());
         // FIX ->
         // SCI ->
         // GEN ->

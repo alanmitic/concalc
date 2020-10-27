@@ -12,6 +12,7 @@ export class ConCalc implements CommandImplementor {
 
     constructor() {
         this.vs = new Map()
+        this.vs.set(this.ANSWER_VAR_NAME, 0)
         this.ee = new ExprEval(this.vs)
         this.cmdParser = new CommandExecutor(this)
 
@@ -51,6 +52,11 @@ export class ConCalc implements CommandImplementor {
                     console.error("[ERROR] " + exprError.message)
                 }
             }
+        })
+    }
+    onCommandVars(): void {
+        this.vs.forEach((value, key, map) => {
+            console.log(key + " : " + value)
         })
     }
 

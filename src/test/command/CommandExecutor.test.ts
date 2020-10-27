@@ -6,34 +6,40 @@ import { CommandImplementor } from "../../command/CommandParser";
 describe("Command Parser API", () => {
 
     class MockCommandImplementor implements CommandImplementor {
+        onCommandVars(): void { }
         onCommandExit(): void { }
     }
 
     let onCommandExitSpy: any
-    let cmdParser: CommandExecutor
+    let onCommandVarsSpy: any
+    let cmdExec: CommandExecutor
 
     beforeEach(() => {
         use(spies)
 
         let mockCommandImplementor = new MockCommandImplementor()
-        onCommandExitSpy = spy.on(mockCommandImplementor, 'onCommandExit')
-        cmdParser = new CommandExecutor(mockCommandImplementor)
+        onCommandVarsSpy = spy.on(mockCommandImplementor, "onCommandVars")
+        onCommandExitSpy = spy.on(mockCommandImplementor, "onCommandExit")
+        cmdExec = new CommandExecutor(mockCommandImplementor)
     });
 
     it("should parse the exit command and call CommandImplementor.onCommandExit", () => {
-        let isCommand = cmdParser.parse("exit")
+        expect(cmdExec.parse("exit")).equal(true)
         expect(onCommandExitSpy).to.have.been.called()
-        expect(isCommand).equal(true)
     })
 
     it("should parse the quit command and call CommandImplementor.onCommandExit", () => {
-        let isCommand = cmdParser.parse("quit")
+        expect(cmdExec.parse("quit")).equal(true)
         expect(onCommandExitSpy).to.have.been.called()
-        expect(isCommand).equal(true)
+    })
+
+    it("should parse the vars command and call CommandImplementor.onCommandVars", () => {
+        expect(cmdExec.parse("vars")).equal(true)
+        expect(onCommandVarsSpy).to.have.been.called()
     })
 
     xit("should detect unknown commands and throw an error", () => {
-        expect(() => {cmdParser.parse("@ABADCOMMAND")}).to.throw("unknown command \"@ABADCOMMAND\"")
+        expect(() => {cmdExec.parse("@ABADCOMMAND")}).to.throw("unknown command \"@ABADCOMMAND\"")
     })
 
 })
