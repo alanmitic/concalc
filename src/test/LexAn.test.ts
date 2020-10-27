@@ -1,8 +1,8 @@
 import { expect } from "chai"
-import { TokenType, Token, LexAn, LexAnError } from "../LexAn"
+import { TokenType, Token, LexAn } from "../LexAn"
 
-describe("Lexical Analayser API", function () {
-  it("should return END on an empty expression", function () {
+describe("Lexical Analayser API", () => {
+  it("should return END on an empty expression", () => {
     let lexAn
     let token: Token
 
@@ -22,7 +22,7 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal(null)
   })
 
-  it("should extract indentifiers from an expression", function () {
+  it("should extract indentifiers from an expression", () => {
     let lexAn
     let token: Token
 
@@ -52,7 +52,7 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal("aBc")
   })
 
-  it("should extract numbers from an expression", function () {
+  it("should extract numbers from an expression", () => {
     let lexAn
     let token: Token
 
@@ -77,7 +77,7 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal(1234)
   })
 
-  it("should extract operators from an expression", function () {
+  it("should extract operators from an expression", () => {
     let lexAn
     let token: Token
 
@@ -152,7 +152,7 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal(null)
   })
 
-  it("should handle expressions where there are no spaces inbetween tokens", function () {
+  it("should handle expressions where there are no spaces inbetween tokens", () => {
     let lexAn
     let token: Token
 
@@ -170,7 +170,7 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal(5678)
   })
 
-  it("should extract variable names from an expression and they should be in uppercase", function () {
+  it("should extract variable names from an expression and they should be in uppercase", () => {
     let lexAn
     let token: Token
 
@@ -180,7 +180,7 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal("$MYVAR")
   })
 
-  it("should extract command names from an command string", function () {
+  it("should extract command names from an command string", () => {
     let lexAn
     let token: Token
 
@@ -190,25 +190,25 @@ describe("Lexical Analayser API", function () {
     expect(token[1]).equal("@mycommand")
   })
 
-  it("should detect incomplete shift operator tokens and throw an error", function () {
+  it("should detect incomplete shift operator tokens and throw an error", () => {
     expect(() => {new LexAn(">").getNextToken()}).to.throw("incomplete token expected >> or >>>")
     expect(() => {new LexAn("<").getNextToken()}).to.throw("incomplete token expected <<")
   })
 
-  it("should detect unknown tokens and throw an error", function () {
+  it("should detect unknown tokens and throw an error", () => {
     expect(() => {new LexAn("_").getNextToken()}).to.throw("Unknown token \"_\"")
   })
 })
 
-describe("Lexical Analayser helper methods", function () {
-  it("should detect whitespaces characters correctly", function () {
+describe("Lexical Analayser helper methods", () => {
+  it("should detect whitespaces characters correctly", () => {
     expect(LexAn.isWhitespace(" ")).equal(true)
     expect(LexAn.isWhitespace("\t")).equal(true)
     expect(LexAn.isWhitespace("a")).equal(false)
     expect(LexAn.isWhitespace("")).equal(false)
   })
 
-  it("should detect alpha characters correctly", function () {
+  it("should detect alpha characters correctly", () => {
     expect(LexAn.isAlpha(" ")).equal(false)
     expect(LexAn.isAlpha("\t")).equal(false)
     expect(LexAn.isAlpha("")).equal(false)
@@ -218,7 +218,7 @@ describe("Lexical Analayser helper methods", function () {
     expect(LexAn.isAlpha("Z")).equal(true)
   })
 
-  it("should detect numbers characters correctly", function () {
+  it("should detect numbers characters correctly", () => {
     expect(LexAn.isNumber(" ")).equal(false)
     expect(LexAn.isNumber("\t")).equal(false)
     expect(LexAn.isNumber("")).equal(false)

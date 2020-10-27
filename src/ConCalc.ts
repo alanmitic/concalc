@@ -1,18 +1,18 @@
 import { ReadLine, createInterface } from "readline"
-import { CommandImplementor, CommandExecutor } from "./CommandExecutor"
+import { CommandImplementor, CommandParser } from "./CommandParser"
 import { ExprEval, VariableStore } from "./ExprEval"
 
 export class ConCalc implements CommandImplementor {
     readonly ANSWER_VAR_NAME = "$ANS"
     vs: VariableStore
     ee: ExprEval
-    cmdExec: CommandExecutor
+    cmdParser: CommandParser
     rl: ReadLine
 
     constructor() {
         this.vs = new Map()
         this.ee = new ExprEval(this.vs)
-        this.cmdExec = new CommandExecutor(this)
+        this.cmdParser = new CommandParser(this)
 
         this.rl = createInterface({
             input: process.stdin,
@@ -36,7 +36,7 @@ export class ConCalc implements CommandImplementor {
             // Check for commands, commands start with "@".
             if (trimmedLine.startsWith("@")) {
                 try {
-                    this.cmdExec.execute(trimmedLine)
+                    this.cmdParser.parse(trimmedLine)
                 } catch (commandError) {
                     console.error("[ERROR] " + commandError.message)
                 }

@@ -11,14 +11,14 @@ export class CommandError extends Error {
     }
 }
 
-export class CommandExecutor {
+export class CommandParser {
     commandImplementor: CommandImplementor
 
     constructor(commandImplementor: CommandImplementor) {
         this.commandImplementor = commandImplementor
     }
 
-    execute(commandString: string) {
+    parse(commandString: string) {
         let lexAn = new LexAn(commandString)
         let nextToken = lexAn.getNextToken()
 
@@ -33,7 +33,7 @@ export class CommandExecutor {
                 break
 
             default:
-                throw new CommandError("unknown command " + nextToken[1])
+                throw new CommandError("unknown command \"" + nextToken[1] + "\"")
         }
     }
 

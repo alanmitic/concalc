@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommandExecutor = exports.CommandError = void 0;
+exports.CommandParser = exports.CommandError = void 0;
 var LexAn_1 = require("./LexAn");
 var CommandError = /** @class */ (function (_super) {
     __extends(CommandError, _super);
@@ -25,11 +25,11 @@ var CommandError = /** @class */ (function (_super) {
     return CommandError;
 }(Error));
 exports.CommandError = CommandError;
-var CommandExecutor = /** @class */ (function () {
-    function CommandExecutor(commandImplementor) {
+var CommandParser = /** @class */ (function () {
+    function CommandParser(commandImplementor) {
         this.commandImplementor = commandImplementor;
     }
-    CommandExecutor.prototype.execute = function (commandString) {
+    CommandParser.prototype.parse = function (commandString) {
         var lexAn = new LexAn_1.LexAn(commandString);
         var nextToken = lexAn.getNextToken();
         if (nextToken[0] !== LexAn_1.TokenType.COMMAND) {
@@ -41,10 +41,10 @@ var CommandExecutor = /** @class */ (function () {
                 this.commandImplementor.onCommandExit();
                 break;
             default:
-                throw new CommandError("unknown command " + nextToken[1]);
+                throw new CommandError("unknown command \"" + nextToken[1] + "\"");
         }
     };
-    return CommandExecutor;
+    return CommandParser;
 }());
-exports.CommandExecutor = CommandExecutor;
-//# sourceMappingURL=CommandExecutor.js.map
+exports.CommandParser = CommandParser;
+//# sourceMappingURL=CommandParser.js.map

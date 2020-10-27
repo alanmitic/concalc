@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConCalc = void 0;
 var readline_1 = require("readline");
-var CommandExecutor_1 = require("./CommandExecutor");
+var CommandParser_1 = require("./CommandParser");
 var ExprEval_1 = require("./ExprEval");
 var ConCalc = /** @class */ (function () {
     function ConCalc() {
@@ -10,7 +10,7 @@ var ConCalc = /** @class */ (function () {
         this.ANSWER_VAR_NAME = "$ANS";
         this.vs = new Map();
         this.ee = new ExprEval_1.ExprEval(this.vs);
-        this.cmdExec = new CommandExecutor_1.CommandExecutor(this);
+        this.cmdParser = new CommandParser_1.CommandParser(this);
         this.rl = readline_1.createInterface({
             input: process.stdin,
             output: process.stdout,
@@ -29,7 +29,7 @@ var ConCalc = /** @class */ (function () {
             // Check for commands, commands start with "@".
             if (trimmedLine.startsWith("@")) {
                 try {
-                    _this.cmdExec.execute(trimmedLine);
+                    _this.cmdParser.parse(trimmedLine);
                 }
                 catch (commandError) {
                     console.error("[ERROR] " + commandError.message);
