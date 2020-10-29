@@ -56,25 +56,30 @@ describe("Lexical Analayser API", () => {
     let lexAn
     let token: Token
 
-    lexAn = new LexAn("   \t1234   \t  ")
+    lexAn = new LexAn("   \t123   \t  ")
     token = lexAn.getNextToken()
     expect(token[0]).equal(TokenType.NUMBER)
-    expect(token[1]).equal(1234)
+    expect(token[1]).equal(123)
 
-    lexAn = new LexAn("1234   \t  ")
+    lexAn = new LexAn("1.23   \t  ")
     token = lexAn.getNextToken()
     expect(token[0]).equal(TokenType.NUMBER)
-    expect(token[1]).equal(1234)
+    expect(token[1]).equal(1.23)
 
-    lexAn = new LexAn("   \t1234")
+    lexAn = new LexAn(".123   \t  ")
     token = lexAn.getNextToken()
     expect(token[0]).equal(TokenType.NUMBER)
-    expect(token[1]).equal(1234)
+    expect(token[1]).equal(0.123)
 
-    lexAn = new LexAn("1234")
+    lexAn = new LexAn("   \t2e4")
     token = lexAn.getNextToken()
     expect(token[0]).equal(TokenType.NUMBER)
-    expect(token[1]).equal(1234)
+    expect(token[1]).equal(20000)
+
+    lexAn = new LexAn("2e-3")
+    token = lexAn.getNextToken()
+    expect(token[0]).equal(TokenType.NUMBER)
+    expect(token[1]).equal(0.002)
   })
 
   it("should extract operators from an expression", () => {

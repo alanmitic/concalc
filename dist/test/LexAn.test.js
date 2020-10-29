@@ -46,22 +46,26 @@ describe("Lexical Analayser API", function () {
     it("should extract numbers from an expression", function () {
         var lexAn;
         var token;
-        lexAn = new LexAn_1.LexAn("   \t1234   \t  ");
+        lexAn = new LexAn_1.LexAn("   \t123   \t  ");
         token = lexAn.getNextToken();
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.NUMBER);
-        chai_1.expect(token[1]).equal(1234);
-        lexAn = new LexAn_1.LexAn("1234   \t  ");
+        chai_1.expect(token[1]).equal(123);
+        lexAn = new LexAn_1.LexAn("1.23   \t  ");
         token = lexAn.getNextToken();
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.NUMBER);
-        chai_1.expect(token[1]).equal(1234);
-        lexAn = new LexAn_1.LexAn("   \t1234");
+        chai_1.expect(token[1]).equal(1.23);
+        lexAn = new LexAn_1.LexAn(".123   \t  ");
         token = lexAn.getNextToken();
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.NUMBER);
-        chai_1.expect(token[1]).equal(1234);
-        lexAn = new LexAn_1.LexAn("1234");
+        chai_1.expect(token[1]).equal(0.123);
+        lexAn = new LexAn_1.LexAn("   \t2e4");
         token = lexAn.getNextToken();
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.NUMBER);
-        chai_1.expect(token[1]).equal(1234);
+        chai_1.expect(token[1]).equal(20000);
+        lexAn = new LexAn_1.LexAn("2e-3");
+        token = lexAn.getNextToken();
+        chai_1.expect(token[0]).equal(LexAn_1.TokenType.NUMBER);
+        chai_1.expect(token[1]).equal(0.002);
     });
     it("should extract operators from an expression", function () {
         var lexAn;

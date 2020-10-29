@@ -196,6 +196,7 @@ var LexAn = /** @class */ (function () {
             case "7":
             case "8":
             case "9":
+            case ".":
                 nextToken = [TokenType.NUMBER, this.extractNumber()];
                 break;
             case "$":
@@ -247,6 +248,8 @@ var LexAn = /** @class */ (function () {
     LexAn.prototype.extractNumber = function () {
         var extractedNumber = 0;
         var extractedNumberString = "";
+        var exponentDetected = false;
+        var decimalPointDetected = false;
         for (;;) {
             var ch = this.inputText.charAt(this.inputIndex);
             // Note: an empty string is returned in ch if the index goes out of bounds.
@@ -254,11 +257,25 @@ var LexAn = /** @class */ (function () {
                 extractedNumberString = extractedNumberString + ch;
                 this.inputIndex++;
             }
+            else if (!exponentDetected && !decimalPointDetected && ch === '.') {
+                extractedNumberString = extractedNumberString + ch;
+                this.inputIndex++;
+                decimalPointDetected = true;
+            }
+            else if (!exponentDetected && (ch === 'e' || ch === 'E')) {
+                extractedNumberString = extractedNumberString + ch;
+                this.inputIndex++;
+                exponentDetected = true;
+            }
+            else if (exponentDetected && (ch === '+' || ch === '-')) {
+                extractedNumberString = extractedNumberString + ch;
+                this.inputIndex++;
+            }
             else {
                 break;
             }
         }
-        return extractedNumber = parseInt(extractedNumberString);
+        return extractedNumber = parseFloat(extractedNumberString);
     };
     /**
      * Extracts the indentifier from the current pocessing position in the input text.

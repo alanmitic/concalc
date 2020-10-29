@@ -208,7 +208,8 @@ export class LexAn {
             case "7":
             case "8":
             case "9":
-                nextToken = [TokenType.NUMBER, this.extractNumber()]
+            case ".":
+                    nextToken = [TokenType.NUMBER, this.extractNumber()]
                 break
 
             case "$":
@@ -268,6 +269,9 @@ export class LexAn {
     public extractNumber(): number {
         let extractedNumber: number = 0
         let extractedNumberString: string = ""
+        let exponentDetected: boolean = false
+        let decimalPointDetected: boolean = false
+
         for (; ;) {
             let ch: string = this.inputText.charAt(this.inputIndex)
             // Note: an empty string is returned in ch if the index goes out of bounds.
@@ -275,12 +279,23 @@ export class LexAn {
             if (LexAn.isNumber(ch)) {
                 extractedNumberString = extractedNumberString + ch
                 this.inputIndex++
+            } else if (!exponentDetected && !decimalPointDetected && ch === '.') {
+                extractedNumberString = extractedNumberString + ch
+                this.inputIndex++
+                decimalPointDetected = true
+            } else if (!exponentDetected && (ch === 'e' || ch === 'E')) {
+                extractedNumberString = extractedNumberString + ch
+                this.inputIndex++
+                exponentDetected = true
+            } else if (exponentDetected && (ch === '+' || ch === '-')) {
+                extractedNumberString = extractedNumberString + ch
+                this.inputIndex++
             } else {
                 break
             }
         }
 
-        return extractedNumber = parseInt(extractedNumberString)
+        return extractedNumber = parseFloat(extractedNumberString)
     }
 
     /**
