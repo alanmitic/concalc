@@ -79,7 +79,7 @@ exports.LexAnError = LexAnError;
 var LexAn = /** @class */ (function () {
     /**
      * Constructor.
-     * @param inputText Input text to tokensize.
+     * @param inputText Input text to tokenize.
      */
     function LexAn(inputText) {
         this.inputText = inputText;
@@ -87,7 +87,7 @@ var LexAn = /** @class */ (function () {
         this.currentToken = null;
     }
     /**
-     * Gets the curent token or null if there is no current token defined.
+     * Gets the current token or null if there is no current token defined.
      */
     LexAn.prototype.getCurrentToken = function () {
         return this.currentToken;
@@ -243,7 +243,7 @@ var LexAn = /** @class */ (function () {
         }
     };
     /**
-     * Extracts the number from the current pocessing position in the input text.
+     * Extracts the number from the current processing position in the input text.
      */
     LexAn.prototype.extractNumber = function () {
         var extractedNumber = 0;
@@ -278,7 +278,7 @@ var LexAn = /** @class */ (function () {
         return extractedNumber = parseFloat(extractedNumberString);
     };
     /**
-     * Extracts the indentifier from the current pocessing position in the input text.
+     * Extracts the identifier from the current processing position in the input text.
      */
     LexAn.prototype.extractIdentifier = function () {
         var extractedIdentifier = "";

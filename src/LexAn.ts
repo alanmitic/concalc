@@ -73,7 +73,7 @@ export class LexAn {
 
     /**
      * Constructor.
-     * @param inputText Input text to tokensize.
+     * @param inputText Input text to tokenize.
      */
     constructor(inputText: string) {
         this.inputText = inputText
@@ -82,7 +82,7 @@ export class LexAn {
     }
 
     /**
-     * Gets the curent token or null if there is no current token defined.
+     * Gets the current token or null if there is no current token defined.
      */
     getCurrentToken(): Token | null {
         return this.currentToken
@@ -264,7 +264,7 @@ export class LexAn {
     }
 
     /**
-     * Extracts the number from the current pocessing position in the input text.
+     * Extracts the number from the current processing position in the input text.
      */
     public extractNumber(): number {
         let extractedNumber: number = 0
@@ -299,7 +299,7 @@ export class LexAn {
     }
 
     /**
-     * Extracts the indentifier from the current pocessing position in the input text.
+     * Extracts the identifier from the current processing position in the input text.
      */
     private extractIdentifier(): string {
 

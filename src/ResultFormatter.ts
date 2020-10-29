@@ -1,14 +1,24 @@
-import { strict } from "assert";
-
+/**
+ * Result display mode.
+ */
 export enum ResultMode {
+    /** General automatic mode. */
     GENERAL,
+    /** Fixed point mode. */
     FIXED,
+    /** Scientific mode. */
     SCIENTIFIC
 }
 
+/**
+ * Result base.
+ */
 export enum ResultBase {
+    /** Octal base. */
     OCT,
+    /** Decimal base. */
     DEC,
+    /**Hexadecimal base. */
     HEX
 }
 

@@ -44,7 +44,7 @@ export class ConCalc implements CommandImplementor {
             }
 
             if (!isCommand) {
-                // Assume anthing else is an expression, let the expression evalutor handle it.
+                // Assume anything else is an expression, let the expression evaluator handle it.
                 try {
                     let eeResult = this.ee.evaluate(trimmedLine)
                     this.vs.set(this.ANSWER_VAR_NAME, eeResult)

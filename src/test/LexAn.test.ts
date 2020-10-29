@@ -1,7 +1,7 @@
 import { expect } from "chai"
 import { TokenType, Token, LexAn } from "../LexAn"
 
-describe("Lexical Analayser API", () => {
+describe("Lexical Analyser API", () => {
   it("should return END on an empty expression", () => {
     let lexAn
     let token: Token
@@ -22,7 +22,7 @@ describe("Lexical Analayser API", () => {
     expect(token[1]).equal(null)
   })
 
-  it("should extract indentifiers from an expression", () => {
+  it("should extract identifiers from an expression", () => {
     let lexAn
     let token: Token
 
@@ -157,7 +157,7 @@ describe("Lexical Analayser API", () => {
     expect(token[1]).equal(null)
   })
 
-  it("should handle expressions where there are no spaces inbetween tokens", () => {
+  it("should handle expressions where there are no spaces in between tokens", () => {
     let lexAn
     let token: Token
 
@@ -195,8 +195,8 @@ describe("Lexical Analayser API", () => {
   })
 })
 
-describe("Lexical Analayser helper methods", () => {
-  it("should detect whitespaces characters correctly", () => {
+describe("Lexical Analyser helper methods", () => {
+  it("should detect whitespace characters correctly", () => {
     expect(LexAn.isWhitespace(" ")).equal(true)
     expect(LexAn.isWhitespace("\t")).equal(true)
     expect(LexAn.isWhitespace("a")).equal(false)

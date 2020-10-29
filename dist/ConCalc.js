@@ -36,7 +36,7 @@ var ConCalc = /** @class */ (function () {
                 console.error("[ERROR] " + commandError.message);
             }
             if (!isCommand) {
-                // Assume anthing else is an expression, let the expression evalutor handle it.
+                // Assume anything else is an expression, let the expression evaluator handle it.
                 try {
                     var eeResult = _this.ee.evaluate(trimmedLine);
                     _this.vs.set(_this.ANSWER_VAR_NAME, eeResult);

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var chai_1 = require("chai");
 var LexAn_1 = require("../LexAn");
-describe("Lexical Analayser API", function () {
+describe("Lexical Analyser API", function () {
     it("should return END on an empty expression", function () {
         var lexAn;
         var token;
@@ -19,7 +19,7 @@ describe("Lexical Analayser API", function () {
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.END);
         chai_1.expect(token[1]).equal(null);
     });
-    it("should extract indentifiers from an expression", function () {
+    it("should extract identifiers from an expression", function () {
         var lexAn;
         var token;
         lexAn = new LexAn_1.LexAn("   \tabc   \t  ");
@@ -123,7 +123,7 @@ describe("Lexical Analayser API", function () {
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.END);
         chai_1.expect(token[1]).equal(null);
     });
-    it("should handle expressions where there are no spaces inbetween tokens", function () {
+    it("should handle expressions where there are no spaces in between tokens", function () {
         var lexAn;
         var token;
         lexAn = new LexAn_1.LexAn("1234^5678");
@@ -153,8 +153,8 @@ describe("Lexical Analayser API", function () {
         chai_1.expect(function () { new LexAn_1.LexAn("_").getNextToken(); }).to.throw("Unknown token \"_\"");
     });
 });
-describe("Lexical Analayser helper methods", function () {
-    it("should detect whitespaces characters correctly", function () {
+describe("Lexical Analyser helper methods", function () {
+    it("should detect whitespace characters correctly", function () {
         chai_1.expect(LexAn_1.LexAn.isWhitespace(" ")).equal(true);
         chai_1.expect(LexAn_1.LexAn.isWhitespace("\t")).equal(true);
         chai_1.expect(LexAn_1.LexAn.isWhitespace("a")).equal(false);
