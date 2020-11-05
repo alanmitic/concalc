@@ -3,6 +3,7 @@ import { CommandImplementor, CommandParser, CommandParserLookupTable } from "./C
 import { ExitCommandParser } from "./ExitCommandParser"
 import { HelpCommandParser } from "./HelpCommandParser"
 import { VarsCommandParser } from "./VarsCommandParser"
+import { FixCommandParser } from "./FixCommandParser"
 
 export class CommandExecutor {
     commandImplementor: CommandImplementor
@@ -16,7 +17,7 @@ export class CommandExecutor {
         this.commandParserLut.set("HELP", new HelpCommandParser(this.commandParserLut))
         this.commandParserLut.set("QUIT", new ExitCommandParser(true))
         this.commandParserLut.set("VARS", new VarsCommandParser())
-        // FIX ->
+        this.commandParserLut.set("FIX", new FixCommandParser())
         // SCI ->
         // GEN ->
         // HEX ->

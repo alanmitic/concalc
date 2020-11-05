@@ -5,6 +5,7 @@ export type CommandParserLookupTable = Map<string, CommandParser>
 export interface CommandImplementor {
     onCommandExit(): void
     onCommandVars() : void
+    onCommandFix(precision: number) : void
 }
 
 export class CommandError extends Error {

@@ -5,6 +5,7 @@ var LexAn_1 = require("../LexAn");
 var ExitCommandParser_1 = require("./ExitCommandParser");
 var HelpCommandParser_1 = require("./HelpCommandParser");
 var VarsCommandParser_1 = require("./VarsCommandParser");
+var FixCommandParser_1 = require("./FixCommandParser");
 var CommandExecutor = /** @class */ (function () {
     function CommandExecutor(commandImplementor) {
         this.commandParserLut = new Map();
@@ -13,7 +14,7 @@ var CommandExecutor = /** @class */ (function () {
         this.commandParserLut.set("HELP", new HelpCommandParser_1.HelpCommandParser(this.commandParserLut));
         this.commandParserLut.set("QUIT", new ExitCommandParser_1.ExitCommandParser(true));
         this.commandParserLut.set("VARS", new VarsCommandParser_1.VarsCommandParser());
-        // FIX ->
+        this.commandParserLut.set("FIX", new FixCommandParser_1.FixCommandParser());
         // SCI ->
         // GEN ->
         // HEX ->

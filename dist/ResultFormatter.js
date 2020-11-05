@@ -25,14 +25,53 @@ var ResultBase;
     /**Hexadecimal base. */
     ResultBase[ResultBase["HEX"] = 2] = "HEX";
 })(ResultBase = exports.ResultBase || (exports.ResultBase = {}));
+/**
+ * Result formatter.
+ */
 var ResultFormatter = /** @class */ (function () {
+    /**
+     * Constructor.
+     */
     function ResultFormatter() {
+        /** Result formatter mode. */
         this.mode = ResultMode.GENERAL;
+        /** Result formatter base. */
         this.base = ResultBase.DEC;
-        this.fixedPrecision = 2;
+        /** Result formatter precision. */
+        this.precision = 2;
     }
+    /**
+     * Sets the result formatter mode.
+     * @param mode Formatter mode.
+     */
+    ResultFormatter.prototype.setMode = function (mode) {
+        this.mode = mode;
+    };
+    /**
+     * Sets the result formatter precision.
+     * @param precision Precision.
+     */
+    ResultFormatter.prototype.setPrecision = function (precision) {
+        this.precision = precision;
+    };
+    /**
+     * Formats the number into a string.
+     * @param value Number to format.
+     */
     ResultFormatter.prototype.format = function (value) {
-        return value.toString();
+        var formattedValue;
+        switch (this.mode) {
+            case ResultMode.FIXED:
+                formattedValue = value.toFixed(this.precision);
+                break;
+            case ResultMode.SCIENTIFIC:
+                formattedValue = value.toExponential(this.precision);
+                break;
+            case ResultMode.GENERAL:
+                formattedValue = value.toString();
+                break;
+        }
+        return formattedValue;
     };
     return ResultFormatter;
 }());

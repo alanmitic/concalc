@@ -2,7 +2,7 @@ import { ReadLine, createInterface } from "readline"
 import { CommandExecutor } from "./command/CommandExecutor"
 import { CommandImplementor } from "./command/CommandParser"
 import { ExprEval, VariableStore } from "./ExprEval"
-import { ResultFormatter } from "./ResultFormatter"
+import { ResultFormatter, ResultMode } from "./ResultFormatter"
 
 export class ConCalc implements CommandImplementor {
     readonly ANSWER_VAR_NAME = "$ANS"
@@ -76,4 +76,10 @@ export class ConCalc implements CommandImplementor {
     onCommandExit(): void {
         this.rl.close()
     }
+
+    onCommandFix(precision: number): void {
+        this.rf.setMode(ResultMode.FIXED)
+        this.rf.setPrecision(precision)
+    }
+
 }

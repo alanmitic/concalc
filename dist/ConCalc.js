@@ -64,6 +64,10 @@ var ConCalc = /** @class */ (function () {
     ConCalc.prototype.onCommandExit = function () {
         this.rl.close();
     };
+    ConCalc.prototype.onCommandFix = function (precision) {
+        this.rf.setMode(ResultFormatter_1.ResultMode.FIXED);
+        this.rf.setPrecision(precision);
+    };
     return ConCalc;
 }());
 exports.ConCalc = ConCalc;
