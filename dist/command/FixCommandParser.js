@@ -21,10 +21,10 @@ var FixCommandParser = /** @class */ (function () {
         commandImplementor.onCommandFix(precision);
     };
     FixCommandParser.prototype.getUsage = function () {
-        return "FIX [precision]";
+        return "FIX [<precision=2>]";
     };
     FixCommandParser.prototype.getDescription = function () {
-        return "Output variables defined in the variables store.";
+        return "Sets output mode to fixed point with the optionally specified precision.";
     };
     return FixCommandParser;
 }());
