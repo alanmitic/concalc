@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var chai_1 = require("chai");
 var ResultFormatter_1 = require("../ResultFormatter");
 describe("Result Formatter API", function () {
-    it("should output by default in GENERAL/DECIMAL mode.", function () {
+    it("should output by default in AUTO mode.", function () {
         var rf = new ResultFormatter_1.ResultFormatter();
         chai_1.expect(rf.format(1)).equal("1");
     });
@@ -27,9 +27,9 @@ describe("Result Formatter API", function () {
         rf.setPrecision(6);
         chai_1.expect(rf.format(0.0000123456789)).equal("0.000012");
     });
-    it("should output in general mode.", function () {
+    it("should output in auto mode.", function () {
         var rf = new ResultFormatter_1.ResultFormatter();
-        rf.setMode(ResultFormatter_1.ResultMode.GENERAL);
+        rf.setMode(ResultFormatter_1.ResultMode.AUTO);
         chai_1.expect(rf.format(9.87654321)).equal("9.87654321");
         chai_1.expect(rf.format(1234567890)).equal("1234567890");
         chai_1.expect(rf.format(0.0000123456789)).equal("0.0000123456789");

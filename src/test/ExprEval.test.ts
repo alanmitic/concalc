@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { ExprEval, VariableStore } from "../ExprEval"
+import { ExprEval, OperatingMode, VariableStore } from "../ExprEval"
 
 describe("Expression Evaluator API", () => {
     it("should evaluate numbers in an expression", () => {
@@ -28,6 +28,9 @@ describe("Expression Evaluator API", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
 
+        expect(() => {ee.evaluate("~255")}).to.throw("Operation not supported in real mode!")
+
+        ee.setOperatingMode(OperatingMode.PROGRAMMER)
         expect(ee.evaluate("~255")).equal(-256)
     })
 
@@ -35,6 +38,9 @@ describe("Expression Evaluator API", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
 
+        expect(() => {ee.evaluate("255'170")}).to.throw("Operation not supported in real mode!")
+
+        ee.setOperatingMode(OperatingMode.PROGRAMMER)
         expect(ee.evaluate("255'170")).equal(85)
     })
 
@@ -42,6 +48,9 @@ describe("Expression Evaluator API", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
 
+        expect(() => {ee.evaluate("85|170")}).to.throw("Operation not supported in real mode!")
+
+        ee.setOperatingMode(OperatingMode.PROGRAMMER)
         expect(ee.evaluate("85|170")).equal(255)
     })
 
@@ -49,6 +58,9 @@ describe("Expression Evaluator API", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
 
+        expect(() => {ee.evaluate("85&170")}).to.throw("Operation not supported in real mode!")
+
+        ee.setOperatingMode(OperatingMode.PROGRAMMER)
         expect(ee.evaluate("85&170")).equal(0)
     })
 
@@ -98,6 +110,9 @@ describe("Expression Evaluator API", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
 
+        expect(() => {ee.evaluate("1<<8")}).to.throw("Operation not supported in real mode!")
+
+        ee.setOperatingMode(OperatingMode.PROGRAMMER)
         expect(ee.evaluate("1<<8")).equal(256)
     })
 
@@ -105,6 +120,9 @@ describe("Expression Evaluator API", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
 
+        expect(() => {ee.evaluate("8>>2")}).to.throw("Operation not supported in real mode!")
+
+        ee.setOperatingMode(OperatingMode.PROGRAMMER)
         expect(ee.evaluate("8>>2")).equal(2)
     })
 
@@ -112,6 +130,9 @@ describe("Expression Evaluator API", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
 
+        expect(() => {ee.evaluate("-1>>5")}).to.throw("Operation not supported in real mode!")
+
+        ee.setOperatingMode(OperatingMode.PROGRAMMER)
         expect(ee.evaluate("-1>>5")).equal(-1)
     })
 
@@ -151,6 +172,7 @@ describe("Expression Evaluator API", () => {
     it("should detect out of range left shift values in expressions and throw an error", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
+        ee.setOperatingMode(OperatingMode.PROGRAMMER)
         expect(() => {ee.evaluate("1<<32")}).to.throw("out of range shift value")
         expect(() => {ee.evaluate("1<<-1")}).to.throw("out of range shift value")
     })
@@ -158,6 +180,7 @@ describe("Expression Evaluator API", () => {
     it("should detect out of range right shift values in expressions and throw an error", () => {
         let vs: VariableStore = new Map()
         let ee = new ExprEval(vs)
+        ee.setOperatingMode(OperatingMode.PROGRAMMER)
         expect(() => {ee.evaluate("1>>32")}).to.throw("out of range shift value")
         expect(() => {ee.evaluate("1>>-1")}).to.throw("out of range shift value")
         expect(() => {ee.evaluate("1>>>32")}).to.throw("out of range shift value")

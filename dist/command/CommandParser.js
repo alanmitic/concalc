@@ -14,8 +14,15 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommandError = void 0;
+/**
+ * Command error.
+ */
 var CommandError = /** @class */ (function (_super) {
     __extends(CommandError, _super);
+    /**
+     * Constructs command error with specified message.
+     * @param message Error message.
+     */
     function CommandError(message) {
         var _this = _super.call(this, message) || this;
         _this.name = "CommandError";

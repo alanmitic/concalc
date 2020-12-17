@@ -38,10 +38,10 @@ describe("Lexical Analyser API", function () {
         token = lexAn.getNextToken();
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.IDENTIFIER);
         chai_1.expect(token[1]).equal("abc");
-        lexAn = new LexAn_1.LexAn("aBc");
+        lexAn = new LexAn_1.LexAn("aBc123");
         token = lexAn.getNextToken();
         chai_1.expect(token[0]).equal(LexAn_1.TokenType.IDENTIFIER);
-        chai_1.expect(token[1]).equal("aBc");
+        chai_1.expect(token[1]).equal("aBc123");
     });
     it("should extract numbers from an expression", function () {
         var lexAn;

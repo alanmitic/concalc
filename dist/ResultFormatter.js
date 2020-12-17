@@ -1,30 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ResultFormatter = exports.ResultBase = exports.ResultMode = void 0;
+exports.ResultFormatter = exports.ResultMode = void 0;
 /**
  * Result display mode.
  */
 var ResultMode;
 (function (ResultMode) {
-    /** General automatic mode. */
-    ResultMode[ResultMode["GENERAL"] = 0] = "GENERAL";
+    /** Automatic mode. */
+    ResultMode[ResultMode["AUTO"] = 0] = "AUTO";
     /** Fixed point mode. */
     ResultMode[ResultMode["FIXED"] = 1] = "FIXED";
     /** Scientific mode. */
     ResultMode[ResultMode["SCIENTIFIC"] = 2] = "SCIENTIFIC";
+    /** Programmer mode. */
+    ResultMode[ResultMode["PROGRAMMER"] = 3] = "PROGRAMMER";
 })(ResultMode = exports.ResultMode || (exports.ResultMode = {}));
-/**
- * Result base.
- */
-var ResultBase;
-(function (ResultBase) {
-    /** Octal base. */
-    ResultBase[ResultBase["OCT"] = 0] = "OCT";
-    /** Decimal base. */
-    ResultBase[ResultBase["DEC"] = 1] = "DEC";
-    /**Hexadecimal base. */
-    ResultBase[ResultBase["HEX"] = 2] = "HEX";
-})(ResultBase = exports.ResultBase || (exports.ResultBase = {}));
 /**
  * Result formatter.
  */
@@ -34,18 +24,30 @@ var ResultFormatter = /** @class */ (function () {
      */
     function ResultFormatter() {
         /** Result formatter mode. */
-        this.mode = ResultMode.GENERAL;
-        /** Result formatter base. */
-        this.base = ResultBase.DEC;
+        this.mode = ResultMode.AUTO;
         /** Result formatter precision. */
         this.precision = 2;
     }
+    /**
+     * Gets the result formatter mode.
+     * @returns Mode.
+     */
+    ResultFormatter.prototype.getMode = function () {
+        return this.mode;
+    };
     /**
      * Sets the result formatter mode.
      * @param mode Formatter mode.
      */
     ResultFormatter.prototype.setMode = function (mode) {
         this.mode = mode;
+    };
+    /**
+     * Gets the result formatter precision
+     * @returns Formatter precision
+     */
+    ResultFormatter.prototype.getPrecision = function () {
+        return this.precision;
     };
     /**
      * Sets the result formatter precision.
@@ -67,11 +69,22 @@ var ResultFormatter = /** @class */ (function () {
             case ResultMode.SCIENTIFIC:
                 formattedValue = value.toExponential(this.precision);
                 break;
-            case ResultMode.GENERAL:
+            case ResultMode.AUTO:
                 formattedValue = value.toString();
+                break;
+            case ResultMode.PROGRAMMER:
+                formattedValue = this.formatProgrammerResult(value);
                 break;
         }
         return formattedValue;
+    };
+    ResultFormatter.prototype.formatProgrammerResult = function (value) {
+        var binValue = value.toString(2);
+        var octValue = value.toString(8);
+        var decValue = value.toString(10);
+        var hexValue = value.toString(16);
+        return binValue +
+            " bin, " + octValue + " oct, " + decValue + " dec, " + hexValue + " hex";
     };
     return ResultFormatter;
 }());

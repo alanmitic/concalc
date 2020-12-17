@@ -22,21 +22,29 @@ describe("Expression Evaluator API", function () {
     it("should evaluate expressions with the bitwise not (complement) operator", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("~255"); }).to.throw("Operation not supported in real mode!");
+        ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
         chai_1.expect(ee.evaluate("~255")).equal(-256);
     });
     it("should evaluate expressions with the bitwise xor operator", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("255'170"); }).to.throw("Operation not supported in real mode!");
+        ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
         chai_1.expect(ee.evaluate("255'170")).equal(85);
     });
     it("should evaluate expressions with the bitwise or operator", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("85|170"); }).to.throw("Operation not supported in real mode!");
+        ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
         chai_1.expect(ee.evaluate("85|170")).equal(255);
     });
     it("should evaluate expressions with the bitwise and operator", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("85&170"); }).to.throw("Operation not supported in real mode!");
+        ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
         chai_1.expect(ee.evaluate("85&170")).equal(0);
     });
     it("should evaluate expressions with the power operator", function () {
@@ -72,16 +80,22 @@ describe("Expression Evaluator API", function () {
     it("should evaluate expressions with the left shift operator", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("1<<8"); }).to.throw("Operation not supported in real mode!");
+        ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
         chai_1.expect(ee.evaluate("1<<8")).equal(256);
     });
     it("should evaluate expressions with the right shift operator", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("8>>2"); }).to.throw("Operation not supported in real mode!");
+        ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
         chai_1.expect(ee.evaluate("8>>2")).equal(2);
     });
     it("should evaluate expressions with the unsigned right shift operator", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
+        chai_1.expect(function () { ee.evaluate("-1>>5"); }).to.throw("Operation not supported in real mode!");
+        ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
         chai_1.expect(ee.evaluate("-1>>5")).equal(-1);
     });
     it("should evaluate expressions with the parenthesis", function () {
@@ -112,12 +126,14 @@ describe("Expression Evaluator API", function () {
     it("should detect out of range left shift values in expressions and throw an error", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
+        ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
         chai_1.expect(function () { ee.evaluate("1<<32"); }).to.throw("out of range shift value");
         chai_1.expect(function () { ee.evaluate("1<<-1"); }).to.throw("out of range shift value");
     });
     it("should detect out of range right shift values in expressions and throw an error", function () {
         var vs = new Map();
         var ee = new ExprEval_1.ExprEval(vs);
+        ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
         chai_1.expect(function () { ee.evaluate("1>>32"); }).to.throw("out of range shift value");
         chai_1.expect(function () { ee.evaluate("1>>-1"); }).to.throw("out of range shift value");
         chai_1.expect(function () { ee.evaluate("1>>>32"); }).to.throw("out of range shift value");

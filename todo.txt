@@ -1,0 +1,13 @@
+This file show outstanding features and bug that need to be fixed/implemented:
+
+Bugs:
+* Need to capture invalid precision range. e.g. negative or too high.
+* parseFloat is giving inaccurate results
+
+Features:
+* Add support for hex numbers.
+* Add support for oct numbers.
+* Add support for dec numbers.
+* Expand HELP command to allow for a command name to be specified in the HELP.
+* Might need a REAL mode and a PROG mode and for it to be held in the expression evaluator.  it will then do int or real math
+* Might need ExprEvalOperation interface. ????? then map to ProgrammersOperationsImp and RealOperationsImpl

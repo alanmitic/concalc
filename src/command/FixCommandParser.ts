@@ -2,9 +2,13 @@ import { LexAn, TokenType } from "../LexAn"
 import { CommandImplementor, CommandParser, CommandError } from "./CommandParser"
 
 /**
- * Fix command parser
+ * FIX command parser
  */
 export class FixCommandParser implements CommandParser {
+
+    /**
+     * @override
+     */
     parse(lexAn: LexAn, commandImplementor: CommandImplementor): void {
 
         let precision = 2
@@ -19,10 +23,16 @@ export class FixCommandParser implements CommandParser {
         commandImplementor.onCommandFix(precision)
     }
 
+    /**
+     * @override
+     */
     getUsage(): string {
         return "FIX [<precision=2>]"
     }
 
+    /**
+     * @override
+     */
     getDescription(): string {
         return "Sets output mode to fixed point with the optionally specified precision."
     }

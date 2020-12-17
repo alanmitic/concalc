@@ -304,14 +304,19 @@ export class LexAn {
     private extractIdentifier(): string {
 
         let extractedIdentifier = ""
+        let firstCharProcessed = false
 
         for (; ;) {
             let ch: string = this.inputText.charAt(this.inputIndex)
             // Note: an empty string is returned in ch if the index goes out of bounds.
+            let isAlpha = LexAn.isAlpha(ch)
+            let isNum = LexAn.isNumber(ch)
+            let isIdentiferChar =  (!firstCharProcessed && isAlpha) || (firstCharProcessed && (isAlpha || isNum))
 
-            if (LexAn.isAlpha(ch)) {
+            if (isIdentiferChar) {
                 extractedIdentifier = extractedIdentifier + ch
                 this.inputIndex++
+                firstCharProcessed = true
             } else {
                 break
             }

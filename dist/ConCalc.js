@@ -9,7 +9,7 @@ var ConCalc = /** @class */ (function () {
     function ConCalc() {
         var _this = this;
         this.ANSWER_VAR_NAME = "$ANS";
-        this.PROMPT = "CONCALC :> ";
+        this.APP_NAME = "CONCALC";
         this.rf = new ResultFormatter_1.ResultFormatter();
         this.vs = new Map();
         this.vs.set(this.ANSWER_VAR_NAME, 0);
@@ -52,13 +52,28 @@ var ConCalc = /** @class */ (function () {
         });
     }
     ConCalc.prototype.displayPrompt = function () {
-        this.rl.setPrompt(this.PROMPT);
+        var prompt = this.APP_NAME;
+        switch (this.ee.getOperatingMode()) {
+            case ExprEval_1.OperatingMode.PROGRAMMER:
+                prompt +=
+                    "/" + ExprEval_1.OperatingMode[this.ee.getOperatingMode()] +
+                        "/" + this.rf.getPrecision() + "-BITS";
+                break;
+            case ExprEval_1.OperatingMode.REAL:
+                prompt +=
+                    "/" + ExprEval_1.OperatingMode[this.ee.getOperatingMode()] +
+                        "/" + ResultFormatter_1.ResultMode[this.rf.getMode()];
+                break;
+        }
+        prompt += " :> ";
+        this.rl.setPrompt(prompt);
         this.rl.prompt(true);
     };
     ConCalc.prototype.onCommandVars = function () {
+        var _this = this;
         console.log("Variables store contains:");
         this.vs.forEach(function (value, key, map) {
-            console.log(" - " + key + " : " + value);
+            console.log(" - " + key + " : " + _this.rf.format(value));
         });
     };
     ConCalc.prototype.onCommandExit = function () {
@@ -67,6 +82,19 @@ var ConCalc = /** @class */ (function () {
     ConCalc.prototype.onCommandFix = function (precision) {
         this.rf.setMode(ResultFormatter_1.ResultMode.FIXED);
         this.rf.setPrecision(precision);
+    };
+    ConCalc.prototype.onCommandSci = function (precision) {
+        this.rf.setMode(ResultFormatter_1.ResultMode.SCIENTIFIC);
+        this.rf.setPrecision(precision);
+    };
+    ConCalc.prototype.onCommandReal = function () {
+        this.ee.setOperatingMode(ExprEval_1.OperatingMode.REAL);
+        this.rf.setMode(ResultFormatter_1.ResultMode.AUTO);
+    };
+    ConCalc.prototype.onCommandProg = function (bits) {
+        this.ee.setOperatingMode(ExprEval_1.OperatingMode.PROGRAMMER);
+        this.rf.setMode(ResultFormatter_1.ResultMode.PROGRAMMER);
+        this.rf.setPrecision(bits);
     };
     return ConCalc;
 }());

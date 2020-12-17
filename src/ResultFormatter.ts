@@ -2,24 +2,14 @@
  * Result display mode.
  */
 export enum ResultMode {
-    /** General automatic mode. */
-    GENERAL,
+    /** Automatic mode. */
+    AUTO,
     /** Fixed point mode. */
     FIXED,
     /** Scientific mode. */
-    SCIENTIFIC
-}
-
-/**
- * Result base.
- */
-export enum ResultBase {
-    /** Octal base. */
-    OCT,
-    /** Decimal base. */
-    DEC,
-    /**Hexadecimal base. */
-    HEX
+    SCIENTIFIC,
+    /** Programmer mode. */
+    PROGRAMMER
 }
 
 /**
@@ -27,11 +17,9 @@ export enum ResultBase {
  */
 export class ResultFormatter {
     /** Result formatter mode. */
-    mode = ResultMode.GENERAL
-    /** Result formatter base. */
-    base = ResultBase.DEC
+    private mode = ResultMode.AUTO
     /** Result formatter precision. */
-    precision = 2;
+    private precision = 2;
 
     /**
      * Constructor.
@@ -40,11 +28,27 @@ export class ResultFormatter {
     }
 
     /**
+     * Gets the result formatter mode.
+     * @returns Mode.
+     */
+    getMode(): ResultMode {
+        return this.mode
+    }
+
+    /**
      * Sets the result formatter mode.
      * @param mode Formatter mode.
      */
     setMode(mode: ResultMode): void {
         this.mode = mode
+    }
+
+    /**
+     * Gets the result formatter precision
+     * @returns Formatter precision
+     */
+    getPrecision(): number {
+        return this.precision
     }
 
     /**
@@ -70,11 +74,29 @@ export class ResultFormatter {
                 formattedValue = value.toExponential(this.precision)
                 break
 
-            case ResultMode.GENERAL:
+            case ResultMode.AUTO:
                 formattedValue = value.toString()
                 break
-        }
+
+            case ResultMode.PROGRAMMER:
+                formattedValue = this.formatProgrammerResult(value)
+                break
+            }
 
         return formattedValue
     }
+
+    private formatProgrammerResult(value: number): string {
+
+        let binValue = value.toString(2)
+        let octValue = value.toString(8)
+        let decValue = value.toString(10)
+        let hexValue = value.toString(16)
+
+
+        return binValue +
+        " bin, " + octValue + " oct, " + decValue + " dec, " + hexValue + " hex"
+    }
+
+
 }

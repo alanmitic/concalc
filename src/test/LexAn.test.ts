@@ -46,10 +46,10 @@ describe("Lexical Analyser API", () => {
     expect(token[0]).equal(TokenType.IDENTIFIER)
     expect(token[1]).equal("abc")
 
-    lexAn = new LexAn("aBc")
+    lexAn = new LexAn("aBc123")
     token = lexAn.getNextToken()
     expect(token[0]).equal(TokenType.IDENTIFIER)
-    expect(token[1]).equal("aBc")
+    expect(token[1]).equal("aBc123")
   })
 
   it("should extract numbers from an expression", () => {

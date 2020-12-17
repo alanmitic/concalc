@@ -1,4 +1,6 @@
 import { LexAn, LexAnError, Token, TokenType } from "./LexAn"
+import { ProgOperation } from "./operation/ProgOperation";
+import { RealOperation } from "./operation/RealOperation";
 
 export type VariableStore = Map<String, number>;
 
@@ -10,20 +12,70 @@ export class ExprError extends Error {
 }
 
 /**
+ * Operating mode.
+ */
+export enum OperatingMode {
+    /** Real mode (Default). */
+    REAL = 0,
+    /** Programmers mode. */
+    PROGRAMMER
+}
+
+export interface ExprEvalOperation {
+    assign(value: number): number
+    unaryMinus(value: number): number
+    unaryPlus(value: number): number
+    add(value1: number, value2: number): number
+    subtract(value1: number, value2: number): number
+    multiply(value1: number, value2: number): number
+    divide(value1: number, value2: number): number
+    power(value1: number, value2: number): number
+    modulo(value1: number, value2: number): number
+    not(value1: number): number
+    and(value1: number, value2: number): number
+    or(value1: number, value2: number): number
+    xor(value1: number, value2: number): number
+    leftShift(value1: number, value2: number): number
+    rightShift(value1: number, value2: number): number
+    unsignedRightShift(value1: number, value2: number): number
+}
+
+/**
  * Expression Evaluator.
  */
 export class ExprEval {
     /** Variable store. */
-    variableStore: VariableStore
+    private variableStore: VariableStore
+    /** Operating mode. */
+    private operatingMode: OperatingMode = OperatingMode.REAL
+    /** Operation implementations */
+    private operationImpls: ExprEvalOperation[]
 
     constructor(variableStore: VariableStore) {
         this.variableStore = variableStore
+        this.operationImpls = [new RealOperation(), new ProgOperation(32)]
+    }
+
+    /**
+     * Gets the operating mode.
+     * @return Operating mode.
+     */
+    getOperatingMode(): OperatingMode {
+        return this.operatingMode
+    }
+
+    /**
+     * Sets the operating mode.
+     * @param operatingMode New operating mode.
+     */
+    setOperatingMode(operatingMode: OperatingMode) {
+        this.operatingMode = operatingMode
     }
 
     evaluate(expression: string): number {
         try {
             let lexAn: LexAn = new LexAn(expression)
-            return this.getTermPrecedence0(lexAn)
+            return this.getTermPrecedence0(lexAn, this.operationImpls[this.operatingMode])
         } catch (lexAnError) {
             throw new ExprError(lexAnError.message)
         }
@@ -41,7 +93,7 @@ export class ExprEval {
      * -----------------------------------------------------------
      * power                   expr ^ expr     (left-associative)
      * -----------------------------------------------------------
-     * multipy                 expr * expr     (left-associative)
+     * multiply                expr * expr     (left-associative)
      * divide                  expr / expr     (left-associative)
      * modulo                  expr % expr     (left-associative)
      * -----------------------------------------------------------
@@ -62,8 +114,8 @@ export class ExprEval {
      * ------------------------------------------------------- LOW
      * LOW
      */
-    private getTermPrecedence0(lexAn: LexAn): number {
-        let term: number = this.getTermPrecedence1(lexAn)
+    private getTermPrecedence0(lexAn: LexAn, operationImpl: ExprEvalOperation): number {
+        let term: number = this.getTermPrecedence1(lexAn, operationImpl)
 
         for (; ;)	// Forever loop.
         {
@@ -71,7 +123,7 @@ export class ExprEval {
 
             switch (token[0]) {
                 case TokenType.OP_BITWISE_OR:
-                    term = Math.trunc(term) | Math.trunc(this.getTermPrecedence1(lexAn))
+                    term = operationImpl.or(term, this.getTermPrecedence1(lexAn, operationImpl))
                     return term
 
                 case TokenType.RP: // Final exit point (result).
@@ -80,14 +132,14 @@ export class ExprEval {
                 case TokenType.END: // Final exit point (result).
                     return term
 
-                default: // Systax error in the expression,
+                default: // Syntax error in the expression,
                     throw new ExprError("syntax error in expression")
             }
         }
     }
 
-    private getTermPrecedence1(lexAn: LexAn): number {
-        let term: number = this.getTermPrecedence2(lexAn)
+    private getTermPrecedence1(lexAn: LexAn, operationImpl: ExprEvalOperation): number {
+        let term: number = this.getTermPrecedence2(lexAn, operationImpl)
 
         for (; ;) {
             let token: Token = lexAn.peekNextToken()
@@ -95,7 +147,7 @@ export class ExprEval {
             switch (token[0]) {
                 case TokenType.OP_BITWISE_XOR:
                     lexAn.getNextToken()
-                    term = Math.trunc(term) ^ Math.trunc(this.getTermPrecedence2(lexAn))
+                    term = operationImpl.xor(term, this.getTermPrecedence2(lexAn, operationImpl))
                     return term
 
                 default:
@@ -104,15 +156,15 @@ export class ExprEval {
         }
     }
 
-    private getTermPrecedence2(lexAn: LexAn): number {
-        let term: number = this.getTermPrecedence3(lexAn)
+    private getTermPrecedence2(lexAn: LexAn, operationImpl: ExprEvalOperation): number {
+        let term: number = this.getTermPrecedence3(lexAn, operationImpl)
 
         for (; ;) {
             let token: Token = lexAn.peekNextToken()
             switch (token[0]) {
                 case TokenType.OP_BITWISE_AND:
                     lexAn.getNextToken()
-                    term = Math.trunc(term) & Math.trunc(this.getTermPrecedence3(lexAn))
+                    term = operationImpl.and(term, this.getTermPrecedence3(lexAn, operationImpl))
                     return term
 
                 default:
@@ -121,40 +173,28 @@ export class ExprEval {
         }
     }
 
-    private getTermPrecedence3(lexAn: LexAn): number {
-        let term: number = this.getTermPrecedence4(lexAn)
+    private getTermPrecedence3(lexAn: LexAn, operationImpl: ExprEvalOperation): number {
+        let term: number = this.getTermPrecedence4(lexAn, operationImpl)
         for (; ;) {
             let token: Token = lexAn.peekNextToken()
             switch (token[0]) {
                 case TokenType.OP_LEFT_SHIFT: {
                     lexAn.getNextToken()
-                    let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
-                    if (ShiftValue < 0 || ShiftValue > 31) {
-                        throw new ExprError("out of range shift value")
-                    }
-                    term = Math.trunc(term) << ShiftValue
-                }
+                    term = operationImpl.leftShift(term, this.getTermPrecedence4(lexAn, operationImpl))
                     break
+                }
 
                 case TokenType.OP_RIGHT_SHIFT: {
                     lexAn.getNextToken()
-                    let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
-                    if (ShiftValue < 0 || ShiftValue > 31) {
-                        throw new ExprError("out of range shift value")
-                    }
-                    term = Math.trunc(term) >> ShiftValue
-                }
+                    term = operationImpl.rightShift(term, this.getTermPrecedence4(lexAn, operationImpl))
                     break
+                }
 
                 case TokenType.OP_UNSIGNED_RIGHT_SHIFT: {
                     lexAn.getNextToken()
-                    let ShiftValue = Math.trunc(this.getTermPrecedence4(lexAn))
-                    if (ShiftValue < 0 || ShiftValue > 31) {
-                        throw new ExprError("out of range shift value")
-                    }
-                    term = Math.trunc(term) >>> ShiftValue
-                }
+                    term = operationImpl.unsignedRightShift(term, this.getTermPrecedence4(lexAn, operationImpl))
                     break
+                }
 
                 default:
                     return term
@@ -162,20 +202,20 @@ export class ExprEval {
         }
     }
 
-    private getTermPrecedence4(lexAn: LexAn): number {
-        let term: number = this.getTermPrecedence5(lexAn)
+    private getTermPrecedence4(lexAn: LexAn, operationImpl: ExprEvalOperation): number {
+        let term: number = this.getTermPrecedence5(lexAn, operationImpl)
 
         for (; ;) {
             let token: Token = lexAn.peekNextToken()
             switch (token[0]) {
                 case TokenType.OP_PLUS:
                     lexAn.getNextToken()
-                    term += this.getTermPrecedence5(lexAn)
+                    term = operationImpl.add(term, this.getTermPrecedence5(lexAn, operationImpl))
                     break
 
                 case TokenType.OP_MINUS:
                     lexAn.getNextToken()
-                    term -= this.getTermPrecedence5(lexAn)
+                    term = operationImpl.subtract(term, this.getTermPrecedence5(lexAn, operationImpl))
                     break
 
                 default:
@@ -184,37 +224,27 @@ export class ExprEval {
         }
     }
 
-    private getTermPrecedence5(lexAn: LexAn): number {
-        let term: number = this.getTermPrecedence6(lexAn)
+    private getTermPrecedence5(lexAn: LexAn, operationImpl: ExprEvalOperation): number {
+        let term: number = this.getTermPrecedence6(lexAn, operationImpl)
         for (; ;) {
             let token: Token = lexAn.peekNextToken()
             switch (token[0]) {
                 case TokenType.OP_MULTIPLY:
                     lexAn.getNextToken()
-                    term *= this.getTermPrecedence6(lexAn)
+                    term = operationImpl.multiply(term, this.getTermPrecedence6(lexAn, operationImpl))
                     break
 
                 case TokenType.OP_DIVIDE: {
                     lexAn.getNextToken()
-                    let rightTerm = this.getTermPrecedence6(lexAn)
-                    if (rightTerm === 0.0) {
-                        throw new ExprError("divide by zero")
-                    }
-
-                    term /= rightTerm
-                }
+                    term = operationImpl.divide(term, this.getTermPrecedence6(lexAn, operationImpl))
                     break
+                }
 
                 case TokenType.OP_MOD: {
                     lexAn.getNextToken()
-                    let rightTerm = this.getTermPrecedence6(lexAn)
-                    if (rightTerm === 0.0) {
-                        throw new ExprError("divide by zero")
-                    }
-
-                    term = Math.trunc(term) % Math.trunc(rightTerm)
-                }
+                    term = operationImpl.modulo(term, this.getTermPrecedence6(lexAn, operationImpl))
                     break
+                }
 
                 default:
                     return term
@@ -222,14 +252,14 @@ export class ExprEval {
         }
     }
 
-    private getTermPrecedence6(lexAn: LexAn): number {
-        let term: number = this.getTermPrecedence7(lexAn)
+    private getTermPrecedence6(lexAn: LexAn, operationImpl: ExprEvalOperation): number {
+        let term: number = this.getTermPrecedence7(lexAn, operationImpl)
         for (; ;) {
             let token: Token = lexAn.peekNextToken()
             switch (token[0]) {
                 case TokenType.OP_POWER:
                     lexAn.getNextToken()
-                    term = Math.pow(term, this.getTermPrecedence7(lexAn))
+                    term = operationImpl.power(term, this.getTermPrecedence7(lexAn, operationImpl))
                     break
 
                 default:
@@ -239,7 +269,7 @@ export class ExprEval {
     }
 
     /**
-     * Evalulate the terms at the precedence level 8.
+     * Evaluate the terms at the precedence level 8.
      * The following operators are processed:
      * - Number
      * - Unary minus
@@ -249,24 +279,24 @@ export class ExprEval {
      * - Variable (plus optional assignment)
      * @param lexAn Lexical analyser to get token from.
      */
-    private getTermPrecedence7(lexAn: LexAn): number {
+    private getTermPrecedence7(lexAn: LexAn, operationImpl: ExprEvalOperation): number {
         let token: Token = lexAn.getNextToken()
         switch (token[0]) {
             case TokenType.NUMBER:
-                return token[1] as number
+                return operationImpl.assign(token[1] as number)
 
             case TokenType.OP_MINUS:
-                return -this.getTermPrecedence7(lexAn)
+                return operationImpl.unaryMinus(this.getTermPrecedence7(lexAn, operationImpl))
 
             case TokenType.OP_PLUS:
-                return this.getTermPrecedence7(lexAn)
+                return operationImpl.unaryPlus(this.getTermPrecedence7(lexAn, operationImpl))
 
             case TokenType.OP_BITWISE_NOT:
-                return ~Math.trunc(this.getTermPrecedence7(lexAn))
+                return operationImpl.not(this.getTermPrecedence7(lexAn, operationImpl))
 
             case TokenType.LP: {
                 // Treat the expression after the parentheses as a new expression and evaluate.
-                let term = this.getTermPrecedence0(lexAn)
+                let term = operationImpl.assign(this.getTermPrecedence0(lexAn, operationImpl))
 
                 // Check expression should have ended on a right parentheses.
                 if ((lexAn.getCurrentToken() as Token)[0] != TokenType.RP) {
@@ -285,16 +315,16 @@ export class ExprEval {
                     this.variableStore.set(variableName, variableValue)
                 }
 
-                // Have a look for the assing operator as the next token, if so
+                // Have a look for the assign operator as the next token, if so
                 // we process the remainder as a new expression.
                 let peekedToken = lexAn.peekNextToken()
                 if (peekedToken[0] == TokenType.OP_ASSIGN) {
                     lexAn.getNextToken() // Bump past assign token.
-                    variableValue = this.getTermPrecedence0(lexAn)
+                    variableValue = operationImpl.assign(this.getTermPrecedence0(lexAn, operationImpl))
                     this.variableStore.set(variableName, variableValue)
                 }
 
-                return variableValue as number
+                return operationImpl.assign(variableValue as number)
             }
 
             default:

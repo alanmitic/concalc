@@ -1,12 +1,12 @@
 import { ReadLine, createInterface } from "readline"
 import { CommandExecutor } from "./command/CommandExecutor"
 import { CommandImplementor } from "./command/CommandParser"
-import { ExprEval, VariableStore } from "./ExprEval"
+import { ExprEval, VariableStore, OperatingMode } from "./ExprEval"
 import { ResultFormatter, ResultMode } from "./ResultFormatter"
 
 export class ConCalc implements CommandImplementor {
     readonly ANSWER_VAR_NAME = "$ANS"
-    readonly PROMPT = "CONCALC :> "
+    readonly APP_NAME = "CONCALC"
     vs: VariableStore
     ee: ExprEval
     cmdParser: CommandExecutor
@@ -62,14 +62,34 @@ export class ConCalc implements CommandImplementor {
     }
 
     displayPrompt() : void {
-        this.rl.setPrompt(this.PROMPT)
+
+        let prompt = this.APP_NAME
+
+        switch(this.ee.getOperatingMode()) {
+            case OperatingMode.PROGRAMMER:
+                prompt +=
+                "/" + OperatingMode[this.ee.getOperatingMode()] +
+                "/" + this.rf.getPrecision() + "-BITS"
+                break;
+
+            case OperatingMode.REAL:
+                prompt +=
+                "/" + OperatingMode[this.ee.getOperatingMode()] +
+                "/" + ResultMode[this.rf.getMode()]
+                break;
+        }
+
+        prompt += " :> "
+
+
+        this.rl.setPrompt(prompt)
         this.rl.prompt(true)
     }
 
     onCommandVars(): void {
         console.log("Variables store contains:")
         this.vs.forEach((value, key, map) => {
-            console.log(" - " + key + " : " + value)
+            console.log(" - " + key + " : " + this.rf.format(value))
         })
     }
 
@@ -82,4 +102,19 @@ export class ConCalc implements CommandImplementor {
         this.rf.setPrecision(precision)
     }
 
+    onCommandSci(precision: number): void {
+        this.rf.setMode(ResultMode.SCIENTIFIC)
+        this.rf.setPrecision(precision)
+    }
+
+    onCommandReal(): void {
+        this.ee.setOperatingMode(OperatingMode.REAL)
+        this.rf.setMode(ResultMode.AUTO)
+    }
+
+    onCommandProg(bits: number): void {
+        this.ee.setOperatingMode(OperatingMode.PROGRAMMER)
+        this.rf.setMode(ResultMode.PROGRAMMER)
+        this.rf.setPrecision(bits)
+    }
 }

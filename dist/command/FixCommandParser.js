@@ -4,11 +4,14 @@ exports.FixCommandParser = void 0;
 var LexAn_1 = require("../LexAn");
 var CommandParser_1 = require("./CommandParser");
 /**
- * Fix command parser
+ * FIX command parser
  */
 var FixCommandParser = /** @class */ (function () {
     function FixCommandParser() {
     }
+    /**
+     * @override
+     */
     FixCommandParser.prototype.parse = function (lexAn, commandImplementor) {
         var precision = 2;
         var nextToken = lexAn.getNextToken();
@@ -20,9 +23,15 @@ var FixCommandParser = /** @class */ (function () {
         }
         commandImplementor.onCommandFix(precision);
     };
+    /**
+     * @override
+     */
     FixCommandParser.prototype.getUsage = function () {
         return "FIX [<precision=2>]";
     };
+    /**
+     * @override
+     */
     FixCommandParser.prototype.getDescription = function () {
         return "Sets output mode to fixed point with the optionally specified precision.";
     };

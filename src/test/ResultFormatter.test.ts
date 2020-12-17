@@ -3,7 +3,7 @@ import { ResultFormatter, ResultMode } from "../ResultFormatter"
 
 describe("Result Formatter API", () => {
 
-  it("should output by default in GENERAL/DECIMAL mode.", () => {
+  it("should output by default in AUTO mode.", () => {
     let rf = new ResultFormatter()
     expect(rf.format(1)).equal("1")
   })
@@ -36,9 +36,9 @@ describe("Result Formatter API", () => {
     expect(rf.format(0.0000123456789)).equal("0.000012")
   })
 
-  it("should output in general mode.", () => {
+  it("should output in auto mode.", () => {
     let rf = new ResultFormatter()
-    rf.setMode(ResultMode.GENERAL)
+    rf.setMode(ResultMode.AUTO)
 
     expect(rf.format(9.87654321)).equal("9.87654321")
 

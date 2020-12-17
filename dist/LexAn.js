@@ -282,12 +282,17 @@ var LexAn = /** @class */ (function () {
      */
     LexAn.prototype.extractIdentifier = function () {
         var extractedIdentifier = "";
+        var firstCharProcessed = false;
         for (;;) {
             var ch = this.inputText.charAt(this.inputIndex);
             // Note: an empty string is returned in ch if the index goes out of bounds.
-            if (LexAn.isAlpha(ch)) {
+            var isAlpha = LexAn.isAlpha(ch);
+            var isNum = LexAn.isNumber(ch);
+            var isIdentiferChar = (!firstCharProcessed && isAlpha) || (firstCharProcessed && (isAlpha || isNum));
+            if (isIdentiferChar) {
                 extractedIdentifier = extractedIdentifier + ch;
                 this.inputIndex++;
+                firstCharProcessed = true;
             }
             else {
                 break;
